@@ -1,12 +1,10 @@
-package com.morcay.mazarbul.ui.creacion
+package com.morcay.mazarbul.ui.raza
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -16,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [CrearPersonajeFragment.newInstance] factory method to
+ * Use the [RazaFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CrearPersonajeFragment : Fragment() {
+class RazaFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -37,15 +35,7 @@ class CrearPersonajeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_crear_personaje, container, false)
-    }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val btnRaza = view.findViewById<Button>(R.id.btnRaza)
-        btnRaza.setOnClickListener {
-            findNavController().navigate(R.id.razaFragment)
-        }
+        return inflater.inflate(R.layout.fragment_raza, container, false)
     }
 
     companion object {
@@ -55,12 +45,12 @@ class CrearPersonajeFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment CrearPersonajeFragment.
+         * @return A new instance of fragment RazaFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            CrearPersonajeFragment().apply {
+            RazaFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

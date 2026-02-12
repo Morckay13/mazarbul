@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Raza"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnSeleccionarRaza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar raza"
+        android:layout_marginBottom="12dp"/>
+
+    <ImageView
+        android:id="@+id/imgRaza"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:src="@drawable/ic_launcher_background"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:id="@+id/tvDescripcionRaza"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="(Aquí irá la descripción de la raza)"
+        android:textSize="14sp"/>
+
+    <Button
+        android:id="@+id/btnContinuarSubraza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Continuar"/>
+</LinearLayout>

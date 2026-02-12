@@ -21,6 +21,10 @@
         android:id="@+id/crearPersonajeFragment"
         android:name="com.morcay.mazarbul.ui.creacion.CrearPersonajeFragment"
         android:label="Crear personaje" />
+    <fragment
+        android:id="@+id/razaFragment"
+        android:name="com.morcay.mazarbul.ui.raza.RazaFragment"
+        android:label="Raza" />
 
 
 </navigation>
