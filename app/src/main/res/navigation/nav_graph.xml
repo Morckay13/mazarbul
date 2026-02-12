@@ -17,5 +17,10 @@
         android:id="@+id/golarionIntroFragment"
         android:name="com.morcay.mazarbul.ui.creacion.GolarionIntroFragment"
         android:label="Golarion" />
+    <fragment
+        android:id="@+id/crearPersonajeFragment"
+        android:name="com.morcay.mazarbul.ui.creacion.CrearPersonajeFragment"
+        android:label="Crear personaje" />
+
 
 </navigation>
