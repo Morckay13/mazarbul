@@ -9,4 +9,9 @@
         android:id="@+id/homeFragment"
         android:name="com.morcay.mazarbul.ui.home.HomeFragment"
         android:label="Home" />
+    <fragment
+        android:id="@+id/personajesFragment"
+        android:name="com.morcay.mazarbul.ui.personajes.PersonajesFragment"
+        android:label="Personajes" />
+
 </navigation>
