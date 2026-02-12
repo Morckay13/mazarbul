@@ -8,10 +8,15 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
+import androidx.fragment.app.activityViewModels
+import com.morcay.mazarbul.ui.creacion.PersonajeViewModel
+
 
 
 class AtributosFragment : Fragment(R.layout.fragment_atributos) {
 
+
+    private val personajeVM: PersonajeViewModel by activityViewModels()
     private val atributosFinales = mutableMapOf<String, Int>()
     private var puntosRestantes = 27
     private val minAtributo = 8
@@ -42,21 +47,21 @@ class AtributosFragment : Fragment(R.layout.fragment_atributos) {
             tvPuntos.text = "Puntos restantes: $puntosRestantes"
         }
 
-        val btnConfirmar = view.findViewById<Button>(R.id.btnConfirmarAtributos)
+       // val btnConfirmar = view.findViewById<Button>(R.id.btnConfirmarAtributos)
 
-        btnConfirmar.setOnClickListener {
+        //btnConfirmar.setOnClickListener {
 
             // 1) Guardar el resultado DIRECTAMENTE en CrearPersonajeFragment
-            val crearEntry = findNavController().getBackStackEntry(R.id.crearPersonajeFragment)
+            //val crearEntry = findNavController().getBackStackEntry(R.id.crearPersonajeFragment)
 
-            crearEntry.savedStateHandle.set(
-                "atributosFinales",
-                HashMap(atributosFinales)
-            )
+            //crearEntry.savedStateHandle.set(
+               // "atributosFinales",
+               // HashMap(atributosFinales)
+          //  )
 
             // 2) Volver directamente a CrearPersonajeFragment (saltando los intermedios)
-            findNavController().popBackStack(R.id.crearPersonajeFragment, false)
-        }
+          //  findNavController().popBackStack(R.id.crearPersonajeFragment, false)
+      //  }
 
 
         actualizarPuntosUI()
@@ -68,6 +73,33 @@ class AtributosFragment : Fragment(R.layout.fragment_atributos) {
         configurarFila(view.findViewById(R.id.rowInteligencia), "Inteligencia", bonus["Inteligencia"] ?: 0) { actualizarPuntosUI() }
         configurarFila(view.findViewById(R.id.rowSabiduria), "Sabiduría", bonus["Sabiduría"] ?: 0) { actualizarPuntosUI() }
         configurarFila(view.findViewById(R.id.rowCarisma), "Carisma", bonus["Carisma"] ?: 0) { actualizarPuntosUI() }
+
+        // Recuperamos raza y subraza desde el backstack
+        val razaSeleccionada = findNavController()
+            .getBackStackEntry(R.id.razaFragment)
+            .savedStateHandle
+            .get<String>("razaSeleccionada")
+
+        val subrazaSeleccionada = findNavController()
+            .getBackStackEntry(R.id.subrazaFragment)
+            .savedStateHandle
+            .get<String>("subrazaSeleccionada")
+
+        val btnConfirmar = view.findViewById<Button>(R.id.btnConfirmarAtributos)
+
+        btnConfirmar.setOnClickListener {
+
+            // 1) Guardar raza + subraza en ViewModel
+            personajeVM.setRazaSubraza(razaSeleccionada, subrazaSeleccionada)
+
+            // 2) Guardar atributos finales (tu mapa ya existe: atributosFinales)
+            personajeVM.setAtributosFinales(atributosFinales)
+
+            // 3) Volver directamente a CrearPersonajeFragment
+            findNavController().popBackStack(R.id.crearPersonajeFragment, false)
+        }
+
+
     }
 
     private fun calcularModificador(total: Int): Int {
@@ -136,6 +168,8 @@ class AtributosFragment : Fragment(R.layout.fragment_atributos) {
             refrescar()
             onPuntosCambiados()
         }
+
+
     }
 
     private fun calcularBonusRazaSubraza(raza: String, subraza: String): Map<String, Int> {

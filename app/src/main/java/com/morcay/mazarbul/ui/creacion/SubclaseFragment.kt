@@ -17,14 +17,13 @@ class SubclaseFragment : Fragment(R.layout.fragment_subclase) {
          * y vuelve a la pantalla anterior (ClaseFragment)
          */
         fun seleccionarSubclase(nombre: String) {
-
-            // Guardamos el resultado en el fragment anterior
-            findNavController().previousBackStackEntry
+            // Guardamos la subclase elegida en el estado del fragment actual
+            findNavController().currentBackStackEntry
                 ?.savedStateHandle
                 ?.set("subclaseSeleccionada", nombre)
 
-            // Volvemos atrás
-            findNavController().popBackStack()
+            // Navegamos a la pantalla de descripción
+            findNavController().navigate(R.id.descripcionSubclaseFragment)
         }
 
         // Conectamos los botones

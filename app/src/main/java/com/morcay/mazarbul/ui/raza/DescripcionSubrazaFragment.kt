@@ -33,29 +33,20 @@ class DescripcionSubrazaFragment : Fragment() {
 
         btnContinuar.setOnClickListener {
 
-            // Subraza (ya lo tenías)
+            // 1) Leer la subraza que viene del paso anterior (SubrazaFragment)
             val subraza = findNavController().previousBackStackEntry
                 ?.savedStateHandle
                 ?.get<String>("subrazaSeleccionada")
 
-            // Raza: viene de pasos anteriores. Normalmente está guardada en el backstack
-            val raza = findNavController().previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<String>("razaSeleccionada")
-
-            // Guardamos ambos para Atributos
+            // 2) Guardar esa subraza como dato "para atributos"
             findNavController().currentBackStackEntry
                 ?.savedStateHandle
                 ?.set("subrazaParaAtributos", subraza)
 
-            findNavController().currentBackStackEntry
-                ?.savedStateHandle
-                ?.set("razaParaAtributos", raza)
-
+            // 3) Navegar a la pantalla de atributos
             findNavController().navigate(R.id.atributosFragment)
         }
 
-
     }
-    
+
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Imagen grande -->
+    <ImageView
+        android:id="@+id/imgSubclaseDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_background"/>
+
+    <!-- Nombre de subclase -->
+    <TextView
+        android:id="@+id/tvNombreSubclaseDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Subclase"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingTop="12dp"/>
+
+    <!-- Descripción -->
+    <TextView
+        android:id="@+id/tvDescripcionSubclase"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Aquí irá la descripción / historia de la subclase..."
+        android:paddingTop="12dp"/>
+
+    <TextView
+        android:id="@+id/tvHabilidadesElegidas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Habilidades elegidas: (ninguna)"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+
+    <!-- Botón habilidades (wizard) -->
+    <Button
+        android:id="@+id/btnHabilidades"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar habilidades"/>
+
+    <!-- Continuar -->
+    <Button
+        android:id="@+id/btnConfirmarClase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirmar"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

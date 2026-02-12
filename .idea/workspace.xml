@@ -25,6 +25,11 @@
           <theme>@style/Theme.Mazarbul</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_descripcion_subclase.xml">
+        <config>
+          <theme>@style/Theme.Mazarbul</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_descripcion_subraza.xml">
         <config>
           <theme>@style/Theme.Mazarbul</theme>
@@ -107,6 +112,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="layoutResourceFile" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>

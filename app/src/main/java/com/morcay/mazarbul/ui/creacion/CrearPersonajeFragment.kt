@@ -7,10 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
+import androidx.fragment.app.activityViewModels
+
 
 class CrearPersonajeFragment : Fragment() {
+
+    private val personajeVM: PersonajeViewModel by activityViewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +65,69 @@ class CrearPersonajeFragment : Fragment() {
             findNavController().navigate(R.id.claseFragment)
         }
 
-    }
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("claseSeleccionada")
+            ?.observe(viewLifecycleOwner) { clase ->
+                // Ejemplo: actualizar UI
+                // tvClase.text = clase
+            }
 
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("subclaseSeleccionada")
+            ?.observe(viewLifecycleOwner) { subclase ->
+                // actualizar UI
+            }
+
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<ArrayList<String>>("habilidadesSeleccionadas")
+            ?.observe(viewLifecycleOwner) { habilidades ->
+                // actualizar UI
+            }
+
+        val tvResumen = view.findViewById<TextView>(R.id.tvResumenRazaAtributos)
+
+        fun renderResumen(
+            raza: String?,
+            subraza: String?,
+            atributos: Map<String, Int>
+        ) {
+            val razaTxt = raza ?: "(no seleccionada)"
+            val subrazaTxt = subraza ?: "-"
+
+            val atributosTxt =
+                if (atributos.isEmpty()) {
+                    "-"
+                } else {
+                    // Orden fijo bonito
+                    val orden = listOf("Fuerza", "Destreza", "Constitución", "Inteligencia", "Sabiduría", "Carisma")
+                    orden.joinToString("\n") { key ->
+                        val v = atributos[key] ?: 0
+                        "$key: $v"
+                    }
+                }
+
+            tvResumen.text = "Raza: $razaTxt\nSubraza: $subrazaTxt\n\nAtributos:\n$atributosTxt"
+        }
+
+// Observamos los 3 valores y repintamos cuando cambie cualquiera
+        var cacheRaza: String? = null
+        var cacheSubraza: String? = null
+        var cacheAtributos: Map<String, Int> = emptyMap()
+
+        personajeVM.raza.observe(viewLifecycleOwner) { r ->
+            cacheRaza = r
+            renderResumen(cacheRaza, cacheSubraza, cacheAtributos)
+        }
+        personajeVM.subraza.observe(viewLifecycleOwner) { s ->
+            cacheSubraza = s
+            renderResumen(cacheRaza, cacheSubraza, cacheAtributos)
+        }
+        personajeVM.atributosFinales.observe(viewLifecycleOwner) { a ->
+            cacheAtributos = a
+            renderResumen(cacheRaza, cacheSubraza, cacheAtributos)
+        }
+    }
 }
