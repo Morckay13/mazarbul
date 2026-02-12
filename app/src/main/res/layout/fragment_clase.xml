@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selección de Clase"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp"/>
+
+    <ImageView
+        android:id="@+id/imgClase"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_background"/>
+
+    <TextView
+        android:id="@+id/tvDescripcionClase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aquí irá la descripción de la clase..."
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnSeleccionarClase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Clase"/>
+
+    <Button
+        android:id="@+id/btnContinuarSubclase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Continuar"
+        android:layout_marginTop="12dp"/>
+
+</LinearLayout>

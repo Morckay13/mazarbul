@@ -66,6 +66,7 @@ class SubrazaFragment : Fragment() {
 
             findNavController().navigate(R.id.descripcionSubrazaFragment)
         }
+
     }
 
 

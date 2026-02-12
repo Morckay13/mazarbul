@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tvNombreAtributo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:text="Atributo"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnMinus"
+        android:layout_width="55dp"
+        android:layout_height="40dp"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/tvValor"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="10"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnPlus"
+        android:layout_width="55dp"
+        android:layout_height="40dp"
+        android:text="+" />
+
+    <TextView
+        android:id="@+id/tvBonus"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="+0"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTotal"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="10"
+        android:textStyle="bold" />
+
+    <!-- NUEVO: MODIFICADOR -->
+    <TextView
+        android:id="@+id/tvModificador"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="+0"
+        android:textStyle="bold" />
+
+</LinearLayout>
+
+
+

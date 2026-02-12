@@ -37,5 +37,23 @@
         android:id="@+id/descripcionSubrazaFragment"
         android:name="com.morcay.mazarbul.ui.raza.DescripcionSubrazaFragment"
         android:label="Descripcion Subraza" />
+    <fragment
+        android:id="@+id/atributosFragment"
+        android:name="com.morcay.mazarbul.ui.raza.AtributosFragment"
+        android:label="Atributos" />
+    <fragment
+        android:id="@+id/claseFragment"
+        android:name="com.morcay.mazarbul.ui.creacion.ClaseFragment"
+        android:label="Clase"/>
+    <fragment
+        android:id="@+id/selectorClaseFragment"
+        android:name="com.morcay.mazarbul.ui.creacion.SelectorClaseFragment"
+        android:label="Seleccionar Clase" />
+    <fragment
+        android:id="@+id/subclaseFragment"
+        android:name="com.morcay.mazarbul.ui.creacion.SubclaseFragment"
+        android:label="Subclase"/>
+
+
 
 </navigation>

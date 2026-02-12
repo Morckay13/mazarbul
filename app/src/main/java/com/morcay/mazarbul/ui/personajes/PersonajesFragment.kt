@@ -42,7 +42,7 @@ class PersonajesFragment : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerPersonajes)
 
-        val listaPrueba = listOf("Tirador", "Guerrero", "Mago")
+        val listaPrueba = listOf("Tirador", "Guerrero", "Mago", "Hechicero")
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = PersonajesAdapter(listaPrueba)
