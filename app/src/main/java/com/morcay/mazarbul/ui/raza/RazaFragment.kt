@@ -56,6 +56,14 @@ class RazaFragment : Fragment(R.layout.fragment_raza) {
         btnContinuar.setOnClickListener {
             findNavController().navigate(R.id.subrazaFragment)
         }
+
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("subrazaSeleccionada")
+            ?.observe(viewLifecycleOwner) { subraza ->
+                tvDesc.text = tvDesc.text.toString() + "\n\nSubraza: $subraza"
+            }
+
     }
 
     companion object {

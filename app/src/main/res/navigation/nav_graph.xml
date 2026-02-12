@@ -33,5 +33,9 @@
         android:id="@+id/subrazaFragment"
         android:name="com.morcay.mazarbul.ui.raza.SubrazaFragment"
         android:label="Subraza" />
+    <fragment
+        android:id="@+id/descripcionSubrazaFragment"
+        android:name="com.morcay.mazarbul.ui.raza.DescripcionSubrazaFragment"
+        android:label="Descripcion Subraza" />
 
 </navigation>
