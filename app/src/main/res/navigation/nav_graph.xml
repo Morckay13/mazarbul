@@ -25,6 +25,13 @@
         android:id="@+id/razaFragment"
         android:name="com.morcay.mazarbul.ui.raza.RazaFragment"
         android:label="Raza" />
-
+    <fragment
+        android:id="@+id/selectorRazaFragment"
+        android:name="com.morcay.mazarbul.ui.raza.SelectorRazaFragment"
+        android:label="Seleccionar raza" />
+    <fragment
+        android:id="@+id/subrazaFragment"
+        android:name="com.morcay.mazarbul.ui.raza.SubrazaFragment"
+        android:label="Subraza" />
 
 </navigation>
