@@ -252,7 +252,8 @@ class CrearPersonajeFragment : Fragment() {
                     Toast.LENGTH_LONG
                 ).show()
 
-                // Volveremos a la lista de personajes después
+                // ✅ Volver a la lista de personajes y limpiar el flujo de creación
+                findNavController().popBackStack(R.id.personajesFragment, false)
             }
         }
 
