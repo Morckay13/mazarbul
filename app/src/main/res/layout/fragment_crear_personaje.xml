@@ -58,9 +58,9 @@
             android:id="@+id/tvResumenClase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Clase: no seleccionada"
+            android:text="Clase: (no seleccionada)\nSubclase: -\nHabilidades: -"
             android:textStyle="bold"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="12dp"/>
 
         <!-- Clase -->
         <Button

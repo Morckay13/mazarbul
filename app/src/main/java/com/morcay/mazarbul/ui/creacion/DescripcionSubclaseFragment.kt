@@ -83,7 +83,7 @@ class DescripcionSubclaseFragment : Fragment(R.layout.fragment_descripcion_subcl
                 .savedStateHandle
                 .set("habilidadesSeleccionadas", ArrayList(habilidadesSeleccionadas))
 
-            // Volver directamente a ClaseFragment (sin bucles)
+            // Volver a ClaseFragment (NO a creación)
             findNavController().popBackStack(R.id.claseFragment, false)
         }
     }

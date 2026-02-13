@@ -50,4 +50,5 @@
         android:text="Confirmar Clase"
         android:layout_marginTop="12dp"/>
 
+
 </LinearLayout>

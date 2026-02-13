@@ -129,5 +129,37 @@ class CrearPersonajeFragment : Fragment() {
             cacheAtributos = a
             renderResumen(cacheRaza, cacheSubraza, cacheAtributos)
         }
+
+        val tvResumenClase = view.findViewById<TextView>(R.id.tvResumenClase)
+
+        fun renderResumenClase(clase: String?, subclase: String?, habilidades: List<String>) {
+            val claseTxt = clase ?: "(no seleccionada)"
+            val subclaseTxt = subclase ?: "-"
+            val habTxt = if (habilidades.isEmpty()) "-" else habilidades.joinToString(", ")
+
+            tvResumenClase.text = "Clase: $claseTxt\nSubclase: $subclaseTxt\nHabilidades: $habTxt"
+        }
+
+// Cache local para repintar bien cuando cambie cualquiera
+        var cacheClase: String? = null
+        var cacheSubclase: String? = null
+        var cacheHabilidades: List<String> = emptyList()
+
+        personajeVM.clase.observe(viewLifecycleOwner) {
+            cacheClase = it
+            renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
+        }
+        personajeVM.subclase.observe(viewLifecycleOwner) {
+            cacheSubclase = it
+            renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
+        }
+        personajeVM.habilidades.observe(viewLifecycleOwner) {
+            cacheHabilidades = it
+            renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
+        }
+
+// Pintar una vez al entrar
+        renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
+
     }
 }
