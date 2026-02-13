@@ -3,31 +3,43 @@ package com.morcay.mazarbul.ui.personajes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.morcay.mazarbul.R
+import com.morcay.mazarbul.data.PersonajeEntity
 
 class PersonajesAdapter(
-    private val lista: List<String>
-) : RecyclerView.Adapter<PersonajesAdapter.ViewHolder>() {
+    private var lista: List<PersonajeEntity>
+) : RecyclerView.Adapter<PersonajesAdapter.PersonajeVH>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nombre: TextView = view.findViewById(R.id.tvNombre)
-        val detalles: TextView = view.findViewById(R.id.tvDetalles)
+    class PersonajeVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val img: ImageView = itemView.findViewById(R.id.imgPersonaje)
+        val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
+        val tvInfo: TextView = itemView.findViewById(R.id.tvInfo)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonajeVH {
+        val v = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_personaje, parent, false)
-        return ViewHolder(view)
+        return PersonajeVH(v)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val personaje = lista[position]
-        holder.nombre.text = personaje
-        holder.detalles.text = "Humano • Guerrero • Nivel 1"
+    override fun onBindViewHolder(holder: PersonajeVH, position: Int) {
+        val p = lista[position]
+
+        holder.tvNombre.text = p.nombre
+        holder.tvInfo.text = "${p.raza} • ${p.clase}"
+
+        // Por ahora imagen fija
+        holder.img.setImageResource(R.mipmap.ic_launcher)
     }
 
-    override fun getItemCount() = lista.size
+    override fun getItemCount(): Int = lista.size
+
+    fun actualizar(nuevaLista: List<PersonajeEntity>) {
+        lista = nuevaLista
+        notifyDataSetChanged()
+    }
 }
 

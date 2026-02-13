@@ -13,6 +13,11 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import com.morcay.mazarbul.data.AppDatabase
+import com.morcay.mazarbul.data.PersonajeEntity
+import kotlinx.coroutines.launch
+
 
 
 
@@ -219,12 +224,36 @@ class CrearPersonajeFragment : Fragment() {
                 habilidades = habilidades
             )
 
-            // Por ahora: confirmación
-            Toast.makeText(requireContext(), "Personaje registrado: ${personaje.nombre}", Toast.LENGTH_LONG).show()
+            val atributosString = atributos.entries.joinToString(";") {
+                "${it.key}:${it.value}"
+            }
 
-            // ✅ Siguiente paso: volver a pantalla de lista de personajes
-            // Aquí pondremos la navegación a "PersonajesFragment"
-            // findNavController().popBackStack(R.id.personajesFragment, false)
+            val habilidadesString = habilidades.joinToString(",")
+
+            val personajeEntity = PersonajeEntity(
+                nombre = nombre,
+                trasfondo = trasfondo,
+                raza = raza,
+                subraza = subraza,
+                atributos = atributosString,
+                clase = clase,
+                subclase = subclase,
+                habilidades = habilidadesString
+            )
+
+            val db = AppDatabase.getDatabase(requireContext())
+
+            lifecycleScope.launch {
+                db.personajeDao().insert(personajeEntity)
+
+                Toast.makeText(
+                    requireContext(),
+                    "Personaje guardado correctamente",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                // Volveremos a la lista de personajes después
+            }
         }
 
 

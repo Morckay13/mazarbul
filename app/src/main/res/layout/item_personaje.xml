@@ -1,40 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="8dp"
-    android:elevation="2dp">
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <ImageView
-        android:id="@+id/imgCharacter"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_launcher_foreground"
-        android:scaleType="centerCrop"
-        android:layout_marginEnd="12dp"/>
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:padding="12dp">
 
+        <!-- Imagen (por ahora placeholder) -->
+        <ImageView
+            android:id="@+id/imgPersonaje"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@mipmap/ic_launcher"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Nombre -->
         <TextView
             android:id="@+id/tvNombre"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Nombre"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/imgPersonaje"
+            app:layout_constraintTop_toTopOf="@id/imgPersonaje"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Info (raza / clase) -->
         <TextView
-            android:id="@+id/tvDetalles"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvInfo"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Raza • Clase • Nivel"/>
+            android:text="Raza • Clase"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toEndOf="@id/imgPersonaje"
+            app:layout_constraintTop_toBottomOf="@id/tvNombre"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>
+
