@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
 import androidx.fragment.app.activityViewModels
+
 
 
 class CrearPersonajeFragment : Fragment() {
@@ -160,6 +163,72 @@ class CrearPersonajeFragment : Fragment() {
 
 // Pintar una vez al entrar
         renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
+
+        val btnRegistrar = view.findViewById<Button>(R.id.btnRegistrarPersonaje)
+        val etNombre = view.findViewById<EditText>(R.id.etNombrePersonaje)
+        val etTrasfondo = view.findViewById<EditText>(R.id.etTrasfondoPersonaje)
+
+        btnRegistrar.setOnClickListener {
+
+            val nombre = etNombre.text.toString().trim()
+            val trasfondo = etTrasfondo.text.toString().trim()
+
+            // Validaciones mínimas (para UX)
+            if (nombre.isEmpty()) {
+                Toast.makeText(requireContext(), "Introduce un nombre de personaje", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val raza = personajeVM.raza.value
+            val subraza = personajeVM.subraza.value
+            val atributos = personajeVM.atributosFinales.value ?: emptyMap()
+
+            val clase = personajeVM.clase.value
+            val subclase = personajeVM.subclase.value
+            val habilidades = personajeVM.habilidades.value ?: emptyList()
+
+            if (raza.isNullOrBlank() || subraza.isNullOrBlank()) {
+                Toast.makeText(requireContext(), "Completa la Raza y Subraza", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (atributos.isEmpty()) {
+                Toast.makeText(requireContext(), "Completa los Atributos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (clase.isNullOrBlank() || subclase.isNullOrBlank()) {
+                Toast.makeText(requireContext(), "Completa la Clase y Subclase", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (habilidades.isEmpty()) {
+                Toast.makeText(requireContext(), "Selecciona las habilidades", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Construimos el “borrador” del personaje (todavía no Room)
+            val personaje = PersonajeDraft(
+                nombre = nombre,
+                trasfondo = trasfondo,
+                raza = raza,
+                subraza = subraza,
+                atributos = atributos,
+                clase = clase,
+                subclase = subclase,
+                habilidades = habilidades
+            )
+
+            // Por ahora: confirmación
+            Toast.makeText(requireContext(), "Personaje registrado: ${personaje.nombre}", Toast.LENGTH_LONG).show()
+
+            // ✅ Siguiente paso: volver a pantalla de lista de personajes
+            // Aquí pondremos la navegación a "PersonajesFragment"
+            // findNavController().popBackStack(R.id.personajesFragment, false)
+        }
+
+
+
 
     }
 }

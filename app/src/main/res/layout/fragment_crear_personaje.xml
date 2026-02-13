@@ -21,22 +21,23 @@
 
         <!-- Nombre -->
         <EditText
-            android:id="@+id/etNombre"
+            android:id="@+id/etNombrePersonaje"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre del personaje"
-            android:layout_marginBottom="12dp"/>
+            android:inputType="textPersonName"
+            android:layout_marginBottom="8dp"/>
 
         <!-- Trasfondo -->
         <EditText
-            android:id="@+id/etTrasfondo"
+            android:id="@+id/etTrasfondoPersonaje"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Trasfondo del personaje"
-            android:minLines="3"
+            android:layout_height="42dp"
+            android:layout_marginBottom="12dp"
             android:gravity="top"
+            android:hint="Trasfondo del personaje"
             android:inputType="textMultiLine"
-            android:layout_marginBottom="12dp"/>
+            android:minLines="3" />
 
         <TextView
             android:id="@+id/tvResumenRazaAtributos"
@@ -81,10 +82,12 @@
 
         <!-- Registro -->
         <Button
-            android:id="@+id/btnRegistro"
+            android:id="@+id/btnRegistrarPersonaje"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registro"/>
+            android:text="Registrar personaje"
+            android:layout_marginTop="12dp"/>
+
 
     </LinearLayout>
 </ScrollView>
