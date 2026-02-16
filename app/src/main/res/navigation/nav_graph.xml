@@ -57,6 +57,11 @@
         android:id="@+id/descripcionSubclaseFragment"
         android:name="com.morcay.mazarbul.ui.creacion.DescripcionSubclaseFragment"
         android:label="Descripción Subclase" />
+    <fragment
+        android:id="@+id/detallePersonajeFragment"
+        android:name="com.morcay.mazarbul.ui.detalle.DetallePersonajeFragment"
+        android:label="Detalle Personaje" />
+
 
 
 

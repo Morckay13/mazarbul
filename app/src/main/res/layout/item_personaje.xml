@@ -36,19 +36,32 @@
             app:layout_constraintTop_toTopOf="@id/imgPersonaje"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Info (raza / clase) -->
+        <!-- Línea 1: Raza/Subraza -->
         <TextView
-            android:id="@+id/tvInfo"
+            android:id="@+id/tvRaza"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Raza • Clase"
+            android:text="Raza: - • -"
             android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"
             app:layout_constraintStart_toEndOf="@id/imgPersonaje"
             app:layout_constraintTop_toBottomOf="@id/tvNombre"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Línea 2: Clase/Subclase -->
+        <TextView
+            android:id="@+id/tvClase"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Clase: - • -"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toEndOf="@id/imgPersonaje"
+            app:layout_constraintTop_toBottomOf="@id/tvRaza"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
+
 

@@ -20,26 +20,31 @@ class PersonajesFragment : Fragment(R.layout.fragment_personajes) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1) RecyclerView
         recyclerView = view.findViewById(R.id.recyclerPersonajes)
-        adapter = PersonajesAdapter(emptyList())
+        adapter = PersonajesAdapter(emptyList()) { personaje ->
+
+            // Bundle con el id del personaje
+            val b = Bundle().apply {
+                putInt("personajeId", personaje.id)
+            }
+
+            // Navegar a la ficha/detalle
+            findNavController().navigate(R.id.detallePersonajeFragment, b)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        // 2) Botón + Añadir (navega a Golarion intro)
         val btnAdd = view.findViewById<Button>(R.id.btnAddCharacter)
         btnAdd.setOnClickListener {
             findNavController().navigate(R.id.golarionIntroFragment)
         }
 
-        // 3) Cargar personajes al entrar
         cargarPersonajes()
     }
 
     override fun onResume() {
         super.onResume()
-        // ✅ Para que al volver desde "Registrar" se recargue siempre
         cargarPersonajes()
     }
 
@@ -52,3 +57,4 @@ class PersonajesFragment : Fragment(R.layout.fragment_personajes) {
         }
     }
 }
+
