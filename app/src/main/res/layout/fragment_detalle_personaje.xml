@@ -55,6 +55,83 @@
             android:text="Trasfondo"
             android:textStyle="italic" />
 
+        <TextView
+            android:id="@+id/tvTituloAtributos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Atributos"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvAtributos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(aquí aparecerán los atributos)"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvTituloHabilidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Habilidades"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvHabilidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(habilidades del personaje)"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvTituloCombate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Combate"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvIniciativa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Iniciativa: -"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvCA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clase de Armadura: -"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvPG"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Puntos de golpe: -"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvPercepcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Percepción: -"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvVelocidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Velocidad: -"
+            android:layout_marginTop="4dp" />
+
+
         <Button
             android:id="@+id/btnEditar"
             android:layout_width="match_parent"

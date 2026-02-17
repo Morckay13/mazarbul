@@ -41,6 +41,7 @@ class PersonajeViewModel : ViewModel() {
         _subclase.value = subclase
         _habilidades.value = habilidades
     }
+
 }
 
 
