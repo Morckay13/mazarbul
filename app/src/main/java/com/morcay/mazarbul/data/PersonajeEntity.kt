@@ -16,6 +16,6 @@ data class PersonajeEntity(
     val clase: String,
     val subclase: String,
     val habilidades: String,
-    //val nivel: Int
+    val nivel: Int
 )
 

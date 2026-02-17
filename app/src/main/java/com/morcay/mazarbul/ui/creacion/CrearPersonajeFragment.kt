@@ -231,7 +231,7 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
                 clase = clase,
                 subclase = subclase,
                 habilidades = habilidadesString,
-                //nivel = nivel
+                nivel = nivel
             )
 
             lifecycleScope.launch {

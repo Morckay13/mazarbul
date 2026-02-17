@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="6dp">
+
+    <!-- Entrenado -->
+    <TextView
+        android:id="@+id/tvEntrenada"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="--"
+        android:textStyle="bold" />
+
+    <!-- Nombre + atributo -->
+    <TextView
+        android:id="@+id/tvNombreHab"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Atletismo (Fue)" />
+
+    <!-- Bonus -->
+    <TextView
+        android:id="@+id/tvBonusHab"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:text="+0" />
+</LinearLayout>
