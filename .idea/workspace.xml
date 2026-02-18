@@ -75,16 +75,6 @@
           <theme>@style/Theme.Mazarbul</theme>
         </config>
       </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_atributo_detalle.xml">
-        <config>
-          <theme>@style/Theme.Mazarbul</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_habilidad_detalle.xml">
-        <config>
-          <theme>@style/Theme.Mazarbul</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_personaje.xml">
         <config>
           <theme>@style/Theme.Mazarbul</theme>
@@ -126,7 +116,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=RZCX61DE99E]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LocalEmulator::path=C:\Users\Valhalla\.android\avd\Medium_Phone.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -173,8 +163,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Class" />
         <option value="layoutResourceFile" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -193,7 +183,7 @@
     &quot;accountId&quot;: &quot;95df4c7e-4baf-42e6-ae0e-c0d781760f69&quot;
   }
 }</component>
-  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\jadelafuentee\.gradle\wrapper\dists\gradle-9.1.0-bin\9agqghryom9wkf8r80qlhnts3\gradle-9.1.0" javaHome="C:\Program Files\Android\Android Studio\jbr" gradleVersion="9.1.0" />
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\Valhalla\.gradle\wrapper\dists\gradle-9.1.0-bin\9agqghryom9wkf8r80qlhnts3\gradle-9.1.0" javaHome="C:\Program Files\Android\Android Studio\jbr" gradleVersion="9.1.0" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4
@@ -312,12 +302,12 @@
       <map>
         <entry key="com.morcay.mazarbul">
           <value>
-            <CheckInfo lastCheckTimestamp="1771250641888" />
+            <CheckInfo lastCheckTimestamp="1771344925051" />
           </value>
         </entry>
         <entry key="com.morcay.mazarbul.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1771250641889" />
+            <CheckInfo lastCheckTimestamp="1771344925051" />
           </value>
         </entry>
       </map>

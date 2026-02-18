@@ -125,6 +125,28 @@
             android:layout_marginTop="4dp" />
 
         <TextView
+            android:id="@+id/tvFortaleza"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fortaleza: -"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvReflejos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reflejos: -"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvVoluntad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Voluntad: -"
+            android:layout_marginTop="4dp"/>
+
+
+        <TextView
             android:id="@+id/tvVelocidad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

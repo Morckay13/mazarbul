@@ -14,11 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
 import com.morcay.mazarbul.data.AppDatabase
+import com.morcay.mazarbul.rules.Ascendencia
+import com.morcay.mazarbul.rules.ClasePF2
 import kotlinx.coroutines.launch
 import kotlin.math.floor
 
 /**
- * Pantalla de detalle del personaje (versión 1).
+ * Pantalla de detalle del personaje.
  * Recibe "personajeId" por arguments y carga desde Room.
  */
 class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
@@ -50,16 +52,21 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
         val tvPercepcion = view.findViewById<TextView>(R.id.tvPercepcion)
         val tvVelocidad = view.findViewById<TextView>(R.id.tvVelocidad)
 
+        // Tiradas de salvación (TS)
+        val tvFortaleza = view.findViewById<TextView>(R.id.tvFortaleza)
+        val tvReflejos = view.findViewById<TextView>(R.id.tvReflejos)
+        val tvVoluntad = view.findViewById<TextView>(R.id.tvVoluntad)
+
         // 3) DB
         val db = AppDatabase.getDatabase(requireContext())
 
-        // ✅ BOTÓN EDITAR (fuera del launch)
+        // ✅ BOTÓN EDITAR
         btnEditar.setOnClickListener {
             val b = Bundle().apply { putInt("personajeId", personajeId) }
             findNavController().navigate(R.id.crearPersonajeFragment, b)
         }
 
-        // ✅ BOTÓN ELIMINAR (fuera del launch)
+        // ✅ BOTÓN ELIMINAR
         btnEliminar.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Eliminar personaje")
@@ -67,14 +74,7 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
                 .setPositiveButton("Eliminar") { _, _ ->
                     lifecycleScope.launch {
                         db.personajeDao().deleteById(personajeId)
-
-                        Toast.makeText(
-                            requireContext(),
-                            "Personaje eliminado",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        // Volver a la lista
+                        Toast.makeText(requireContext(), "Personaje eliminado", Toast.LENGTH_SHORT).show()
                         findNavController().popBackStack()
                     }
                 }
@@ -91,24 +91,23 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
             tvRaza.text = "Raza: ${p.raza} • ${p.subraza}"
             tvClase.text = "Clase: ${p.clase} • ${p.subclase}"
 
-            // Si tienes nivel en la entidad:
-            tvNivel.text = "Nivel: ${p.nivel}"
-            // Si aún NO tuvieras nivel, usa:
-            // val nivel = 1
             val nivel = p.nivel
+            tvNivel.text = "Nivel: $nivel"
 
             tvTrasfondo.text = p.trasfondo.ifBlank { "Sin trasfondo" }
 
             // ===== Atributos =====
             val atributosMap = parseAtributos(p.atributos)
+
             pintarAtributosTabla(
                 inflater = layoutInflater,
                 container = containerAtributos,
                 atributos = atributosMap
             )
 
-            // ===== Habilidades (bonus real básico PF2e) =====
+            // ===== Habilidades (bonus real PF2e básico) =====
             val habilidades = parseHabilidades(p.habilidades)
+
             pintarHabilidadesTabla(
                 inflater = layoutInflater,
                 container = containerHabilidades,
@@ -117,20 +116,45 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
                 nivel = nivel
             )
 
-            // ===== Combate / básicos =====
+            // ===== Mods base =====
             val modDes = calcularModificador(atributosMap["Destreza"] ?: 10)
+            val modCon = calcularModificador(atributosMap["Constitución"] ?: 10)
+            val modSab = calcularModificador(atributosMap["Sabiduría"] ?: 10)
+
+            // ===== Iniciativa (por ahora solo DEX) =====
             tvIniciativa.text = "Iniciativa: ${formatearBonus(modDes)}"
 
+            // ===== CA (placeholder simple: 10 + DEX) =====
             val ca = 10 + modDes
             tvCA.text = "Clase de Armadura: $ca"
 
-            tvPG.text = "Puntos de golpe: (pendiente de cálculo)"
+            // ===== Percepción (PF2e básico asumiendo entrenada) =====
+            // Percepción = SAB + (nivel + 2)
+            val percepcionTotal = modSab + (nivel + 2)
+            tvPercepcion.text = "Percepción: ${formatearBonus(percepcionTotal)}"
 
-            val modSab = calcularModificador(atributosMap["Sabiduría"] ?: 10)
-            tvPercepcion.text = "Percepción: ${formatearBonus(modSab)} (base)"
+            // ===== TS (PF2e básico asumiendo entrenadas) =====
+            val compEntrenado = nivel + 2
+            tvFortaleza.text = "Fortaleza: ${formatearBonus(modCon + compEntrenado)}"
+            tvReflejos.text = "Reflejos: ${formatearBonus(modDes + compEntrenado)}"
+            tvVoluntad.text = "Voluntad: ${formatearBonus(modSab + compEntrenado)}"
 
-            val velocidad = calcularVelocidadBase(p.raza)
+            // ===== Velocidad (desde catálogo Ascendencia) =====
+            val asc = Ascendencia.fromNombre(p.raza)
+            val velocidad = asc?.velocidad ?: 25
             tvVelocidad.text = "Velocidad: $velocidad ft (base)"
+
+            // ===== PG reales PF2e básico =====
+            // PG = PG_Ascendencia + (PG_Clase + Mod_CON) * Nivel
+            val clase = ClasePF2.fromNombre(p.clase)
+
+            val pgAsc = asc?.pgBase ?: 8
+            val pgClase = clase?.pgPorNivel ?: 8
+
+            val pgTotal = pgAsc + ((pgClase + modCon) * nivel)
+
+            // Mostramos desglose (queda genial y ayuda a depurar)
+            tvPG.text = "PG: $pgTotal  (Asc: $pgAsc, Clase: $pgClase/nivel, CON: ${formatearBonus(modCon)})"
 
             // Imagen fija por ahora
             img.setImageResource(R.mipmap.ic_launcher)
@@ -186,20 +210,6 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
         }
     }
 
-    private fun calcularVelocidadBase(raza: String?): Int {
-        val r = raza?.trim()?.lowercase() ?: return 25
-
-        // Tabla mínima (placeholder). Ajustaremos con tu lista real más adelante.
-        return when {
-            r.contains("enano") || r.contains("dwarf") -> 20
-            r.contains("elfo") || r.contains("elf") -> 30
-            r.contains("humano") || r.contains("human") -> 25
-            r.contains("gnomo") || r.contains("gnome") -> 25
-            r.contains("mediano") || r.contains("halfling") -> 25
-            else -> 25
-        }
-    }
-
     // ----------------------------
     // UI HELPERS (PINTAR TABLAS)
     // ----------------------------
@@ -233,13 +243,9 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
 
     /**
      * BONUS REAL (versión básica PF2e):
-     * - Si la habilidad está en la lista guardada -> asumimos "Entrenada"
+     * - Habilidades guardadas -> asumimos "Entrenada"
      * - Entrenada: nivel + 2
      * - Total = mod atributo + competencia
-     *
-     * Más adelante:
-     * - grados (E/M/L)
-     * - dotes, objetos, penalizadores, etc.
      */
     private fun pintarHabilidadesTabla(
         inflater: LayoutInflater,
@@ -257,13 +263,13 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
             val tvNombre = fila.findViewById<TextView>(R.id.tvNombreHab)
             val tvBonus = fila.findViewById<TextView>(R.id.tvBonusHab)
 
-            // Estas habilidades vienen de la creación -> entrenadas
+            // Entrenadas porque fueron seleccionadas en la creación
             tvEntrenada.text = "EN"
 
             val atributo = atributoDeHabilidad(hab)
             val mod = calcularModificador(atributos[atributo] ?: 10)
 
-            // Competencia Entrenada = nivel + 2
+            // Competencia entrenada PF2e
             val competencia = nivel + 2
 
             val total = mod + competencia
@@ -282,7 +288,8 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
             "arcano", "ocultismo", "religión", "sociedad" -> "Inteligencia"
             "naturaleza", "supervivencia", "medicina" -> "Sabiduría"
             "interpretación", "engaño", "intimidación", "diplomacia" -> "Carisma"
-            else -> "Destreza" // fallback
+            else -> "Destreza"
         }
     }
 }
+
