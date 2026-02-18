@@ -14,26 +14,11 @@
         android:textSize="20sp"
         android:layout_marginBottom="12dp"/>
 
-    <Button
-        android:id="@+id/btnGuerrero"
+    <ListView
+        android:id="@+id/listClases"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Guerrero"
-        android:layout_marginBottom="8dp"/>
-
-    <Button
-        android:id="@+id/btnMago"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Mago"
-        android:layout_marginBottom="8dp"/>
-
-    <Button
-        android:id="@+id/btnClerigo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Clérigo"
-        android:layout_marginBottom="8dp"/>
+        android:layout_height="match_parent"
+        android:dividerHeight="1dp"/>
 
 </LinearLayout>
 

@@ -75,6 +75,16 @@
           <theme>@style/Theme.Mazarbul</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_atributo_detalle.xml">
+        <config>
+          <theme>@style/Theme.Mazarbul</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_habilidad_detalle.xml">
+        <config>
+          <theme>@style/Theme.Mazarbul</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_personaje.xml">
         <config>
           <theme>@style/Theme.Mazarbul</theme>
@@ -102,11 +112,18 @@
       <change beforePath="$PROJECT_DIR$/.gradle/9.1.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.1.0/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/9.1.0/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.1.0/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/PersonajeEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/PersonajeEntity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/CrearPersonajeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/CrearPersonajeFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/DetallePersonajeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/DetallePersonajeFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_detalle_personaje.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_detalle_personaje.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/PersonajeViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/PersonajeViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/SelectorClaseFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/SelectorClaseFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/SubclaseFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/SubclaseFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/raza/SelectorRazaFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/raza/SelectorRazaFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/raza/SubrazaFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/raza/SubrazaFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_selector_clase.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_selector_clase.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +133,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LocalEmulator::path=C:\Users\Valhalla\.android\avd\Medium_Phone.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=RZCX61DE99E]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -183,7 +200,7 @@
     &quot;accountId&quot;: &quot;95df4c7e-4baf-42e6-ae0e-c0d781760f69&quot;
   }
 }</component>
-  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\Valhalla\.gradle\wrapper\dists\gradle-9.1.0-bin\9agqghryom9wkf8r80qlhnts3\gradle-9.1.0" javaHome="C:\Program Files\Android\Android Studio\jbr" gradleVersion="9.1.0" />
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\jadelafuentee\.gradle\wrapper\dists\gradle-9.1.0-bin\9agqghryom9wkf8r80qlhnts3\gradle-9.1.0" javaHome="C:\Program Files\Android\Android Studio\jbr" gradleVersion="9.1.0" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4

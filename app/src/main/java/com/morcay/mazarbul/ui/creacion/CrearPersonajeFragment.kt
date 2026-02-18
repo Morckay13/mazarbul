@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 
 /**
  * CrearPersonajeFragment reutilizado para:
- * - CREAR personaje (insert)
- * - EDITAR personaje (update)
+ * - CREAR (insert)
+ * - EDITAR (update)
  *
  * Si llega arguments["personajeId"] => EDICIÓN
  * Si no llega => CREACIÓN
@@ -28,7 +28,6 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
 
     private val personajeVM: PersonajeViewModel by activityViewModels()
 
-    // Se calculan en onViewCreated (arguments aquí ya es seguro)
     private var personajeId: Int = -1
     private var esEdicion: Boolean = false
 
@@ -39,7 +38,6 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
         personajeId = arguments?.getInt("personajeId", -1) ?: -1
         esEdicion = personajeId != -1
 
-        // DB
         val db = AppDatabase.getDatabase(requireContext())
 
         // Referencias UI
@@ -53,21 +51,22 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
         val tvResumenRazaAtributos = view.findViewById<TextView>(R.id.tvResumenRazaAtributos)
         val tvResumenClase = view.findViewById<TextView>(R.id.tvResumenClase)
 
-        // ✅ 1) Si es edición, cambia el texto del botón (opcional pero recomendable)
-        if (esEdicion) {
-            btnRegistrar.text = "Guardar cambios"
-        } else {
+        // ✅ 1) Iniciar "sesión" según modo
+        if (!esEdicion) {
+            // ✅ Crear nuevo: limpiar SOLO una vez (no al volver de subpantallas)
+            personajeVM.startNewDraft()
             btnRegistrar.text = "Registrar personaje"
+        } else {
+            // ✅ Edición: NO queremos reseteos
+            personajeVM.markEditing()
+            btnRegistrar.text = "Guardar cambios"
         }
 
         // ✅ 2) Navegación a pantallas de selección
         btnRaza.setOnClickListener { findNavController().navigate(R.id.razaFragment) }
         btnClase.setOnClickListener { findNavController().navigate(R.id.claseFragment) }
 
-        /**
-         * ✅ 3) (Opcional) Log de atributos al volver desde atributosFragment
-         * IMPORTANTE: tenías este observer duplicado. Lo dejamos una sola vez.
-         */
+        // ✅ 3) Log (una sola vez, no duplicado)
         findNavController().currentBackStackEntry
             ?.savedStateHandle
             ?.getLiveData<HashMap<String, Int>>("atributosFinales")
@@ -75,9 +74,9 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
                 Log.d("CrearPersonaje", "Atributos recibidos: $atributos")
             }
 
-        /**
-         * ✅ 4) Render de resumen RAZA/SUBRAZA/ATRIBUTOS (se repinta cuando cambie algo)
-         */
+        // -----------------------------
+        // RESUMEN RAZA/SUBRAZA/ATRIBUTOS
+        // -----------------------------
         fun renderResumenRaza(raza: String?, subraza: String?, atributos: Map<String, Int>) {
             val razaTxt = raza ?: "(no seleccionada)"
             val subrazaTxt = subraza ?: "-"
@@ -114,17 +113,15 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
             renderResumenRaza(cacheRaza, cacheSubraza, cacheAtributos)
         }
 
-        // Pintado inicial
         renderResumenRaza(cacheRaza, cacheSubraza, cacheAtributos)
 
-        /**
-         * ✅ 5) Render de resumen CLASE/SUBCLASE/HABILIDADES
-         */
+        // -----------------------------
+        // RESUMEN CLASE/SUBCLASE/HABILIDADES
+        // -----------------------------
         fun renderResumenClase(clase: String?, subclase: String?, habilidades: List<String>) {
             val claseTxt = clase ?: "(no seleccionada)"
             val subclaseTxt = subclase ?: "-"
             val habTxt = if (habilidades.isEmpty()) "-" else habilidades.joinToString(", ")
-
             tvResumenClase.text = "Clase: $claseTxt\nSubclase: $subclaseTxt\nHabilidades: $habTxt"
         }
 
@@ -145,37 +142,28 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
             renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
         }
 
-        // Pintado inicial
         renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
 
-        /**
-         * ✅ 6) Si es EDICIÓN, cargamos el personaje desde Room y rellenamos:
-         * - EditTexts
-         * - ViewModel (para que el resumen muestre lo guardado)
-         */
+        // ✅ 4) Si es EDICIÓN: cargar datos de Room en EditTexts + ViewModel
         if (esEdicion) {
             lifecycleScope.launch {
                 val p = db.personajeDao().getById(personajeId) ?: return@launch
 
-                // EditTexts
                 etNombre.setText(p.nombre)
                 etTrasfondo.setText(p.trasfondo)
 
-                // ✅ ViewModel (con tus setters actuales)
                 personajeVM.setRazaSubraza(p.raza, p.subraza)
                 personajeVM.setAtributosFinales(parseAtributos(p.atributos))
-                personajeVM.setClaseCompleta(
-                    p.clase,
-                    p.subclase,
-                    parseHabilidades(p.habilidades)
-                )
+                personajeVM.setClaseCompleta(p.clase, p.subclase, parseHabilidades(p.habilidades))
             }
+        } else {
+            // ✅ Solo si es creación nueva: limpiamos los EditText (1 vez, al inicio real)
+            // (si ya estaban vacíos, no pasa nada)
+            etNombre.setText("")
+            etTrasfondo.setText("")
         }
 
-
-        /**
-         * ✅ 7) Guardar (INSERT si crear, UPDATE si editar)
-         */
+        // ✅ 5) Guardar (INSERT si crear, UPDATE si editar)
         btnRegistrar.setOnClickListener {
 
             val nombre = etNombre.text.toString().trim()
@@ -194,7 +182,6 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
             val subclase = personajeVM.subclase.value
             val habilidades = personajeVM.habilidades.value ?: emptyList()
 
-            // Validaciones mínimas
             if (raza.isNullOrBlank() || subraza.isNullOrBlank()) {
                 Toast.makeText(requireContext(), "Completa la Raza y Subraza", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -212,15 +199,12 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
                 return@setOnClickListener
             }
 
-            // Serializamos atributos/habilidades a String para Room
             val atributosString = atributos.entries.joinToString(";") { "${it.key}:${it.value}" }
             val habilidadesString = habilidades.joinToString(",")
 
-            // ✅ Nivel: si ya lo tienes en tu entidad, mantenlo
-            // Si aún no calculas nivel, por defecto 1
+            // Nivel por defecto (hasta que implementes leveo real)
             val nivel = 1
 
-            // ✅ CLAVE: si es edición mantenemos el ID para que Room actualice, no cree otro
             val personajeEntity = PersonajeEntity(
                 id = if (esEdicion) personajeId else 0,
                 nombre = nombre,
@@ -243,15 +227,18 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
                     Toast.makeText(requireContext(), "Personaje guardado correctamente", Toast.LENGTH_SHORT).show()
                 }
 
-                // Volver a la lista de personajes
+                // ✅ IMPORTANTE: cerramos la sesión de creación para que el próximo "+ Añadir" empiece limpio
+                personajeVM.finishDraft()
+
                 findNavController().popBackStack(R.id.personajesFragment, false)
             }
         }
     }
 
-    /**
-     * Convierte "Fuerza:15;Destreza:14;..." en Map<String, Int>
-     */
+    // -----------------------------
+    // HELPERS
+    // -----------------------------
+
     private fun parseAtributos(raw: String): Map<String, Int> {
         if (raw.isBlank()) return emptyMap()
 
@@ -267,11 +254,9 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
         return mapa
     }
 
-    /**
-     * Convierte "Acrobacias,Atletismo,..." en List<String>
-     */
     private fun parseHabilidades(raw: String): List<String> {
         if (raw.isBlank()) return emptyList()
         return raw.split(",").map { it.trim() }.filter { it.isNotBlank() }
     }
 }
+
