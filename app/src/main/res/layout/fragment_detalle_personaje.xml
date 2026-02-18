@@ -103,12 +103,27 @@
             android:text="Iniciativa: -"
             android:layout_marginTop="8dp" />
 
+        <Spinner
+            android:id="@+id/spArmadura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+
         <TextView
             android:id="@+id/tvCA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Clase de Armadura: -"
             android:layout_marginTop="4dp" />
+
+        <!-- Escudo (por ahora solo toggle visual) -->
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swEscudoLevantado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Escudo levantado (+2 CA)"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/tvPG"
