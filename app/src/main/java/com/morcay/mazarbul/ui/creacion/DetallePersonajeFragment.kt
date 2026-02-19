@@ -192,7 +192,8 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
                 val gradoDefensa = ProficienciasPF2.gradoDefensa(
                     clase = p.clase,
                     nivel = nivel,
-                    categoria = armadura.categoria
+                    categoria = armadura.categoria,
+                    subclase = p.subclase // importante para Clerigo Warpriest (si aplica)
                 )
 
                 // 3) Bonus de competencia PF2e
