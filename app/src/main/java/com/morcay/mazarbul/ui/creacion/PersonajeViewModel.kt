@@ -6,18 +6,32 @@ import androidx.lifecycle.ViewModel
 
 class PersonajeViewModel : ViewModel() {
 
-    // ===== RAZA / SUBRAZA =====
+    // =========================
+    // ESTADO / MODO DE SESIÓN
+    // =========================
+    private enum class Mode { IDLE, CREATING, EDITING }
+
+    private var mode: Mode = Mode.IDLE
+    private var editingId: Int? = null
+
+    // =========================
+    // RAZA / SUBRAZA
+    // =========================
     private val _raza = MutableLiveData<String?>(null)
     val raza: LiveData<String?> = _raza
 
     private val _subraza = MutableLiveData<String?>(null)
     val subraza: LiveData<String?> = _subraza
 
-    // ===== ATRIBUTOS FINALES (TOTALES) =====
+    // =========================
+    // ATRIBUTOS
+    // =========================
     private val _atributosFinales = MutableLiveData<Map<String, Int>>(emptyMap())
     val atributosFinales: LiveData<Map<String, Int>> = _atributosFinales
 
-    // ===== CLASE / SUBCLASE / HABILIDADES =====
+    // =========================
+    // CLASE / SUBCLASE / HABILIDADES
+    // =========================
     private val _clase = MutableLiveData<String?>(null)
     val clase: LiveData<String?> = _clase
 
@@ -27,18 +41,29 @@ class PersonajeViewModel : ViewModel() {
     private val _habilidades = MutableLiveData<List<String>>(emptyList())
     val habilidades: LiveData<List<String>> = _habilidades
 
-    // -------------------------------------------------------------------
-    // ✅ CONTROL DE "SESION" DE CREACIÓN (para no resetear al volver atrás)
-    // -------------------------------------------------------------------
-    private var creacionIniciada: Boolean = false
+    // =========================
+    // INVENTARIO MÍNIMO (CA)
+    // =========================
+    private val _armaduraEquipada = MutableLiveData("Sin armadura")
+    val armaduraEquipada: LiveData<String> = _armaduraEquipada
 
+    private val _tieneEscudo = MutableLiveData(false)
+    val tieneEscudo: LiveData<Boolean> = _tieneEscudo
+
+    // ------------------------------------------------------------
+    // SESIÓN: CREAR NUEVO
+    // ------------------------------------------------------------
     /**
-     * Llamar SOLO cuando el usuario pulsa "+ Añadir" (crear nuevo).
-     * Resetea una única vez. Si vuelves desde subpantallas, no borra nada.
+     * Llamar SOLO al entrar a CrearPersonajeFragment en modo CREACIÓN.
+     * Resetea UNA sola vez por sesión (para que al volver de selectores no se borre).
      */
     fun startNewDraft() {
-        if (creacionIniciada) return
+        if (mode == Mode.CREATING) return
 
+        mode = Mode.CREATING
+        editingId = null
+
+        // Reset del borrador
         _raza.value = null
         _subraza.value = null
         _atributosFinales.value = emptyMap()
@@ -47,27 +72,34 @@ class PersonajeViewModel : ViewModel() {
         _subclase.value = null
         _habilidades.value = emptyList()
 
-        creacionIniciada = true
+        // Inventario mínimo
+        _armaduraEquipada.value = "Sin armadura"
+        _tieneEscudo.value = false
+    }
+
+    // ------------------------------------------------------------
+    // SESIÓN: EDITAR EXISTENTE
+    // ------------------------------------------------------------
+    /**
+     * Llamar al entrar a CrearPersonajeFragment en modo EDICIÓN.
+     * No resetea nada; solo marca modo edición.
+     */
+    fun startEditing(personajeId: Int) {
+        mode = Mode.EDITING
+        editingId = personajeId
     }
 
     /**
-     * Llamar cuando terminas (guardar / cancelar).
-     * Permite que la próxima creación vuelva a comenzar limpia.
+     * Cuando guardas o cancelas, dejamos el VM listo para una nueva sesión limpia.
      */
     fun finishDraft() {
-        creacionIniciada = false
+        mode = Mode.IDLE
+        editingId = null
     }
 
-    /**
-     * Si entras en edición, NO queremos que un startNewDraft() posterior borre datos.
-     */
-    fun markEditing() {
-        creacionIniciada = true
-    }
-
-    // -------------------------------------------------------------------
-    // ✅ SETTERS (los que ya estabas usando)
-    // -------------------------------------------------------------------
+    // ------------------------------------------------------------
+    // SETTERS (los que ya usas)
+    // ------------------------------------------------------------
     fun setRazaSubraza(raza: String?, subraza: String?) {
         _raza.value = raza
         _subraza.value = subraza
@@ -82,6 +114,18 @@ class PersonajeViewModel : ViewModel() {
         _subclase.value = subclase
         _habilidades.value = habilidades
     }
+
+    // ------------------------------------------------------------
+    // INVENTARIO MÍNIMO (por si luego lo usas en creación también)
+    // ------------------------------------------------------------
+    fun setArmadura(nombre: String) {
+        _armaduraEquipada.value = nombre
+    }
+
+    fun setEscudo(tiene: Boolean) {
+        _tieneEscudo.value = tiene
+    }
 }
+
 
 

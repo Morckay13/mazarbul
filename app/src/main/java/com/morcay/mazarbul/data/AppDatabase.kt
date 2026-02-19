@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-
 @Database(
     entities = [PersonajeEntity::class],
     version = 3,
@@ -29,19 +28,38 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "mazarbul_db"
                 )
-                    .addMigrations(MIGRATION_2_3)
+                    // ✅ IMPORTANTE: registrar TODAS las migraciones necesarias
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
-
 
                 INSTANCE = instance
                 instance
             }
         }
 
+        /**
+         * ✅ MIGRATION 1 -> 2
+         * Si en la versión 2 no cambiaste el esquema, puede estar VACÍA y es correcta.
+         * Si en v2 sí cambiaste algo, aquí irían esos ALTER TABLE.
+         */
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // No-op (sin cambios de esquema en v2)
+            }
+        }
+
+        /**
+         * ✅ MIGRATION 2 -> 3
+         * Añadimos inventario mínimo: armaduraEquipada y tieneEscudo
+         */
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE personajes ADD COLUMN armaduraEquipada TEXT NOT NULL DEFAULT 'Sin armadura'")
-                db.execSQL("ALTER TABLE personajes ADD COLUMN tieneEscudo INTEGER NOT NULL DEFAULT 0")
+                db.execSQL(
+                    "ALTER TABLE personajes ADD COLUMN armaduraEquipada TEXT NOT NULL DEFAULT 'Sin armadura'"
+                )
+                db.execSQL(
+                    "ALTER TABLE personajes ADD COLUMN tieneEscudo INTEGER NOT NULL DEFAULT 0"
+                )
             }
         }
     }
