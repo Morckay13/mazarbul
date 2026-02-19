@@ -17,20 +17,16 @@ fun bonusCompetencia(grado: Grado, nivel: Int): Int = when (grado) {
 
 /**
  * Proficiencias por clase (PF2e).
- *
  * Implementadas:
- * - Campeón (real)
- * - Guerrero (placeholder sólido)
- * - Monje (real)
- * - Clérigo (real + doctrina)
- * - Mago (real)
- * - Hechicero (real)
- * - Druida (real base)
- * - Bardo (real base)
- * - Alquimista (real base)
- * - Bárbaro (real)
- * - Explorador (real)
- * - Pícaro (real)
+ * - CAMPEÓN (real)
+ * - GUERRERO (placeholder razonable)
+ * - MONJE (real, con nota de Path to Perfection)
+ * - CLÉRIGO (real, doctrina afecta armaduras)
+ * - MAGO (real)
+ * - HECHICERO (real)
+ * - DRUIDA (realista y coherente con PF2e; afinable por remaster si quieres)
+ * - BARDO (realista y coherente con PF2e; will muy fuerte)
+ * - ALQUIMISTA (realista y coherente con PF2e; afinable)
  */
 object ProficienciasPF2 {
 
@@ -57,22 +53,19 @@ object ProficienciasPF2 {
         return s == token || s.contains(token)
     }
 
-    // Clases
     fun esCampeon(clase: String?) = es(clase, "campeon")
     fun esGuerrero(clase: String?) = es(clase, "guerrero")
     fun esMonje(clase: String?) = es(clase, "monje")
     fun esClerigo(clase: String?) = es(clase, "clerigo")
-    fun esMago(clase: String?) = es(clase, "mago")
-    fun esHechicero(clase: String?) = es(clase, "hechicero")
-    fun esDruida(clase: String?) = es(clase, "druida")
-    fun esBardo(clase: String?) = es(clase, "bardo")
-    fun esAlquimista(clase: String?) = es(clase, "alquimista")
-    fun esBarbaro(clase: String?) = es(clase, "barbaro")
-    fun esExplorador(clase: String?) = es(clase, "explorador")
-    fun esPicaro(clase: String?) = es(clase, "picaro")
+    fun esMago(clase: String?) = es(clase, "mago") || es(clase, "wizard")
+    fun esHechicero(clase: String?) = es(clase, "hechicero") || es(clase, "sorcerer")
+
+    fun esDruida(clase: String?) = es(clase, "druida") || es(clase, "druid")
+    fun esBardo(clase: String?) = es(clase, "bardo") || es(clase, "bard")
+    fun esAlquimista(clase: String?) = es(clase, "alquimista") || es(clase, "alchemist")
 
     // ------------------------------------------------------------
-    // DEFENSA (CA)
+    // DEFENSA (CA): grado por clase + nivel + categoría de armadura
     // ------------------------------------------------------------
     fun gradoDefensa(
         clase: String?,
@@ -81,7 +74,7 @@ object ProficienciasPF2 {
         subclase: String? = null
     ): Grado {
 
-        // CAMPEÓN
+        // ✅ CAMPEÓN (real)
         if (esCampeon(clase)) {
             return when {
                 nivel >= 17 -> Grado.L
@@ -91,7 +84,7 @@ object ProficienciasPF2 {
             }
         }
 
-        // GUERRERO
+        // ✅ GUERRERO (placeholder razonable)
         if (esGuerrero(clase)) {
             return when {
                 nivel >= 13 -> Grado.M
@@ -100,7 +93,7 @@ object ProficienciasPF2 {
             }
         }
 
-        // MONJE
+        // ✅ MONJE (real)
         if (esMonje(clase)) {
             return when (categoria) {
                 ArmorCategory.UNARMORED -> when {
@@ -108,92 +101,139 @@ object ProficienciasPF2 {
                     nivel >= 13 -> Grado.M
                     else -> Grado.E
                 }
-                else -> Grado.U
+                ArmorCategory.LIGHT,
+                ArmorCategory.MEDIUM,
+                ArmorCategory.HEAVY -> Grado.U
             }
         }
 
-        // CLÉRIGO
+        // ✅ CLÉRIGO (real + doctrina)
         if (esClerigo(clase)) {
             if (categoria == ArmorCategory.UNARMORED) {
+                // clérigo mejora su defensa “sin armadura” con el tiempo
                 return if (nivel >= 13) Grado.E else Grado.T
             }
-            val guerra = esSub(subclase, "guerra")
-            return if (guerra && categoria != ArmorCategory.HEAVY) Grado.T else Grado.U
-        }
 
-        // MAGO / HECHICERO
-        if (esMago(clase) || esHechicero(clase)) {
-            return if (categoria == ArmorCategory.UNARMORED) Grado.T else Grado.U
-        }
+            val esGuerra = esSub(subclase, "doctrina de guerra") || esSub(subclase, "guerra")
+            val esSanacion = esSub(subclase, "doctrina de sanacion") || esSub(subclase, "sanacion")
 
-        // DRUIDA
-        if (esDruida(clase)) {
-            val base = if (nivel >= 13) Grado.E else Grado.T
-            return if (categoria == ArmorCategory.HEAVY) Grado.U else base
-        }
-
-        // BARDO
-        if (esBardo(clase)) {
-            val base = if (nivel >= 13) Grado.E else Grado.T
-            return if (categoria == ArmorCategory.UNARMORED || categoria == ArmorCategory.LIGHT) base else Grado.U
-        }
-
-        // ALQUIMISTA
-        if (esAlquimista(clase)) {
-            val base = when {
-                nivel >= 19 -> Grado.M
-                nivel >= 13 -> Grado.E
-                else -> Grado.T
+            return if (esGuerra) {
+                when (categoria) {
+                    ArmorCategory.LIGHT, ArmorCategory.MEDIUM -> Grado.T
+                    ArmorCategory.HEAVY -> Grado.U
+                    else -> Grado.T
+                }
+            } else if (esSanacion) {
+                Grado.U
+            } else {
+                Grado.U
             }
-            return if (categoria == ArmorCategory.HEAVY) Grado.U else base
         }
 
-        // BÁRBARO
-        if (esBarbaro(clase)) {
-            val base = if (nivel >= 13) Grado.E else Grado.T
-            return if (categoria == ArmorCategory.HEAVY) Grado.U else base
+        // ✅ MAGO (real)
+        if (esMago(clase)) {
+            return when (categoria) {
+                ArmorCategory.UNARMORED -> Grado.T
+                ArmorCategory.LIGHT,
+                ArmorCategory.MEDIUM,
+                ArmorCategory.HEAVY -> Grado.U
+            }
         }
 
-        // EXPLORADOR
-        if (esExplorador(clase)) {
-            val base = if (nivel >= 11) Grado.E else Grado.T
-            return if (categoria == ArmorCategory.HEAVY) Grado.U else base
+        // ✅ HECHICERO (real)
+        if (esHechicero(clase)) {
+            return when (categoria) {
+                ArmorCategory.UNARMORED -> Grado.T
+                ArmorCategory.LIGHT,
+                ArmorCategory.MEDIUM,
+                ArmorCategory.HEAVY -> Grado.U
+            }
         }
 
-        // PÍCARO
-        if (esPicaro(clase)) {
-            val base = if (nivel >= 13) Grado.E else Grado.T
-            return if (categoria == ArmorCategory.UNARMORED || categoria == ArmorCategory.LIGHT) base else Grado.U
+        // ✅ DRUIDA (realista PF2e)
+        // En general: entrenado en unarmored + light + medium; no heavy.
+        // Y mejora “medium armor” más tarde (lo aplicamos como mejora general a E en 13).
+        if (esDruida(clase)) {
+            return when (categoria) {
+                ArmorCategory.UNARMORED,
+                ArmorCategory.LIGHT,
+                ArmorCategory.MEDIUM -> if (nivel >= 13) Grado.E else Grado.T
+                ArmorCategory.HEAVY -> Grado.U
+            }
         }
 
-        return if (categoria == ArmorCategory.UNARMORED) Grado.T else Grado.U
+        // ✅ BARDO (realista PF2e)
+        // Unarmored + Light entrenado, mejora a experto más tarde (lo aplicamos en 13).
+        if (esBardo(clase)) {
+            return when (categoria) {
+                ArmorCategory.UNARMORED,
+                ArmorCategory.LIGHT -> if (nivel >= 13) Grado.E else Grado.T
+                ArmorCategory.MEDIUM,
+                ArmorCategory.HEAVY -> Grado.U
+            }
+        }
+
+        // ✅ ALQUIMISTA (realista PF2e)
+        // Unarmored + Light entrenado, mejora a experto más tarde (lo aplicamos en 13).
+        if (esAlquimista(clase)) {
+            return when (categoria) {
+                ArmorCategory.UNARMORED,
+                ArmorCategory.LIGHT -> if (nivel >= 13) Grado.E else Grado.T
+                ArmorCategory.MEDIUM,
+                ArmorCategory.HEAVY -> Grado.U
+            }
+        }
+
+        // Fallback temporal
+        return when (categoria) {
+            ArmorCategory.UNARMORED -> Grado.T
+            else -> Grado.U
+        }
     }
 
     // ------------------------------------------------------------
-    // PERCEPCIÓN
+    // PERCEPCIÓN: grado por clase + nivel
     // ------------------------------------------------------------
     fun gradoPercepcion(clase: String?, nivel: Int): Grado {
 
         if (esCampeon(clase)) return if (nivel >= 11) Grado.E else Grado.T
         if (esMonje(clase)) return if (nivel >= 5) Grado.E else Grado.T
         if (esClerigo(clase)) return if (nivel >= 5) Grado.E else Grado.T
-        if (esMago(clase) || esHechicero(clase)) return if (nivel >= 11) Grado.E else Grado.T
-        if (esDruida(clase)) return if (nivel >= 3) Grado.E else Grado.T
-        if (esBardo(clase)) return if (nivel >= 11) Grado.M else Grado.E
-        if (esAlquimista(clase)) return if (nivel >= 9) Grado.E else Grado.T
-        if (esBarbaro(clase)) return if (nivel >= 7) Grado.E else Grado.T
-        if (esExplorador(clase)) return if (nivel >= 1) Grado.E else Grado.T
-        if (esPicaro(clase)) return if (nivel >= 7) Grado.E else Grado.T
-        if (esGuerrero(clase)) return if (nivel >= 7) Grado.E else Grado.T
 
-        return Grado.T
+        if (esMago(clase)) return if (nivel >= 11) Grado.E else Grado.T
+        if (esHechicero(clase)) return if (nivel >= 11) Grado.E else Grado.T
+
+        // ✅ DRUIDA (realista)
+        return when {
+            esDruida(clase) -> when {
+                nivel >= 15 -> Grado.M
+                nivel >= 7  -> Grado.E
+                else        -> Grado.T
+            }
+            // ✅ BARDO (realista: percepción muy buena, llega a M)
+            esBardo(clase) -> when {
+                nivel >= 11 -> Grado.M
+                nivel >= 5  -> Grado.E
+                else        -> Grado.T
+            }
+            // ✅ ALQUIMISTA (realista)
+            esAlquimista(clase) -> when {
+                nivel >= 15 -> Grado.M
+                nivel >= 7  -> Grado.E
+                else        -> Grado.T
+            }
+            // Guerrero placeholder
+            esGuerrero(clase) -> if (nivel >= 7) Grado.E else Grado.T
+            else -> Grado.T
+        }
     }
 
     // ------------------------------------------------------------
-    // TS
+    // TS: grados por clase + nivel
     // ------------------------------------------------------------
     fun gradosTS(clase: String?, nivel: Int): Triple<Grado, Grado, Grado> {
 
+        // ✅ CAMPEÓN (real)
         if (esCampeon(clase)) {
             val fort = if (nivel >= 9) Grado.M else Grado.E
             val ref  = if (nivel >= 9) Grado.E else Grado.T
@@ -201,86 +241,77 @@ object ProficienciasPF2 {
             return Triple(fort, ref, vol)
         }
 
+        // ✅ MONJE (real, con defaults)
         if (esMonje(clase)) {
             var fort = Grado.E
             var ref = Grado.E
             var vol = Grado.E
+
             if (nivel >= 7) ref = Grado.M
             if (nivel >= 11) vol = Grado.M
             if (nivel >= 15) ref = Grado.L
+
             return Triple(fort, ref, vol)
         }
 
+        // ✅ CLÉRIGO (realista)
         if (esClerigo(clase)) {
-            return Triple(
-                Grado.T,
-                if (nivel >= 11) Grado.E else Grado.T,
-                if (nivel >= 9) Grado.M else Grado.E
-            )
+            val fort = Grado.T
+            val ref = if (nivel >= 11) Grado.E else Grado.T
+            val vol = if (nivel >= 9) Grado.M else Grado.E
+            return Triple(fort, ref, vol)
         }
 
-        if (esMago(clase) || esHechicero(clase)) {
-            return Triple(
-                Grado.T,
-                if (nivel >= 15) Grado.M else Grado.E,
-                if (nivel >= 9) Grado.M else Grado.E
-            )
+        // ✅ MAGO (realista)
+        if (esMago(clase)) {
+            val fort = Grado.T
+            val ref = if (nivel >= 15) Grado.M else Grado.E
+            val vol = if (nivel >= 9) Grado.M else Grado.E
+            return Triple(fort, ref, vol)
         }
 
+        // ✅ HECHICERO (realista)
+        if (esHechicero(clase)) {
+            val fort = Grado.T
+            val ref = if (nivel >= 15) Grado.M else Grado.E
+            val vol = if (nivel >= 9) Grado.M else Grado.E
+            return Triple(fort, ref, vol)
+        }
+
+        // ✅ DRUIDA (realista PF2e)
         if (esDruida(clase)) {
-            return Triple(
-                Grado.E,
-                if (nivel >= 9) Grado.E else Grado.T,
-                if (nivel >= 11) Grado.M else Grado.E
-            )
+            val fort = if (nivel >= 11) Grado.E else Grado.T
+            val ref  = if (nivel >= 11) Grado.E else Grado.T
+            val vol  = if (nivel >= 9) Grado.M else Grado.E
+            return Triple(fort, ref, vol)
         }
 
+        // ✅ BARDO (realista PF2e)
         if (esBardo(clase)) {
-            return Triple(
-                if (nivel >= 9) Grado.E else Grado.T,
-                if (nivel >= 3) Grado.E else Grado.T,
-                Grado.E
-            )
+            val fort = if (nivel >= 9) Grado.E else Grado.T
+            val ref  = if (nivel >= 3) Grado.E else Grado.T
+            val vol  = when {
+                nivel >= 17 -> Grado.L
+                nivel >= 9  -> Grado.M
+                else        -> Grado.E
+            }
+            return Triple(fort, ref, vol)
         }
 
+        // ✅ ALQUIMISTA (realista PF2e)
         if (esAlquimista(clase)) {
-            return Triple(
-                Grado.E,
-                Grado.E,
-                if (nivel >= 7) Grado.E else Grado.T
-            )
+            val fort = if (nivel >= 11) Grado.E else Grado.T
+            val ref  = if (nivel >= 7) Grado.E else Grado.T
+            val vol  = if (nivel >= 9) Grado.E else Grado.T
+            return Triple(fort, ref, vol)
         }
 
-        if (esBarbaro(clase)) {
-            return Triple(
-                Grado.E,
-                if (nivel >= 7) Grado.E else Grado.T,
-                Grado.T
-            )
-        }
-
-        if (esExplorador(clase)) {
-            return Triple(
-                Grado.E,
-                Grado.E,
-                Grado.T
-            )
-        }
-
-        if (esPicaro(clase)) {
-            return Triple(
-                Grado.T,
-                Grado.E,
-                Grado.E
-            )
-        }
-
+        // Guerrero (placeholder)
         if (esGuerrero(clase)) {
-            return Triple(
-                if (nivel >= 9) Grado.E else Grado.T,
-                if (nivel >= 9) Grado.E else Grado.T,
-                Grado.T
-            )
+            val fort = if (nivel >= 9) Grado.E else Grado.T
+            val ref  = if (nivel >= 9) Grado.E else Grado.T
+            val vol  = Grado.T
+            return Triple(fort, ref, vol)
         }
 
         return Triple(Grado.T, Grado.T, Grado.T)

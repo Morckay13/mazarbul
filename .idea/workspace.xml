@@ -107,11 +107,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8a011808-303b-4c8f-95e1-95e576e1dea8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/AppDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/AppDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/PersonajeDao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/PersonajeDao.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/PersonajeEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/data/PersonajeEntity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/rules/ProficienciasPF2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/rules/ProficienciasPF2.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/DetallePersonajeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/morcay/mazarbul/ui/creacion/DetallePersonajeFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

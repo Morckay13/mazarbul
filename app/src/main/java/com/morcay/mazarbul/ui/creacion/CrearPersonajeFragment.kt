@@ -31,16 +31,21 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
     private var personajeId: Int = -1
     private var esEdicion: Boolean = false
 
+    // ✅ Para no “resetear” al volver de selectores / recreación de vista
+    private var sesionInicializada: Boolean = false
+
+    // ✅ En edición guardamos el personaje original para NO machacar armadura/escudo
+    private var personajeOriginal: PersonajeEntity? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ✅ 0) Detectar modo edición/creación
         personajeId = arguments?.getInt("personajeId", -1) ?: -1
         esEdicion = personajeId != -1
 
         val db = AppDatabase.getDatabase(requireContext())
 
-        // Referencias UI
+        // UI
         val btnRaza = view.findViewById<Button>(R.id.btnRaza)
         val btnClase = view.findViewById<Button>(R.id.btnClase)
         val btnRegistrar = view.findViewById<Button>(R.id.btnRegistrarPersonaje)
@@ -51,22 +56,42 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
         val tvResumenRazaAtributos = view.findViewById<TextView>(R.id.tvResumenRazaAtributos)
         val tvResumenClase = view.findViewById<TextView>(R.id.tvResumenClase)
 
-        // ✅ 1) Iniciar "sesión" según modo
-        if (!esEdicion) {
-            // ✅ Crear nuevo: limpiar SOLO una vez (no al volver de subpantallas)
-            personajeVM.startNewDraft()
-            btnRegistrar.text = "Registrar personaje"
+        // ✅ 1) Inicialización de sesión (solo 1 vez por “entrada real”)
+        // Usamos savedInstanceState para evitar resets al recrear vista (rotación / proceso)
+        if (!sesionInicializada && savedInstanceState == null) {
+            sesionInicializada = true
+
+            if (!esEdicion) {
+                // Crear nuevo -> limpiar 1 vez
+                limpiarDraftParaNuevo()
+                btnRegistrar.text = "Registrar personaje"
+                etNombre.setText("")
+                etTrasfondo.setText("")
+            } else {
+                // Edición -> cargar desde Room y NO resetear
+                btnRegistrar.text = "Guardar cambios"
+                lifecycleScope.launch {
+                    val p = db.personajeDao().getById(personajeId) ?: return@launch
+                    personajeOriginal = p
+
+                    etNombre.setText(p.nombre)
+                    etTrasfondo.setText(p.trasfondo)
+
+                    personajeVM.setRazaSubraza(p.raza, p.subraza)
+                    personajeVM.setAtributosFinales(parseAtributos(p.atributos))
+                    personajeVM.setClaseCompleta(p.clase, p.subclase, parseHabilidades(p.habilidades))
+                }
+            }
         } else {
-            // ✅ Edición: NO queremos reseteos
-            personajeVM.markEditing()
-            btnRegistrar.text = "Guardar cambios"
+            // Si se recrea la vista, solo actualizamos el texto del botón
+            btnRegistrar.text = if (esEdicion) "Guardar cambios" else "Registrar personaje"
         }
 
-        // ✅ 2) Navegación a pantallas de selección
+        // ✅ 2) Navegación
         btnRaza.setOnClickListener { findNavController().navigate(R.id.razaFragment) }
         btnClase.setOnClickListener { findNavController().navigate(R.id.claseFragment) }
 
-        // ✅ 3) Log (una sola vez, no duplicado)
+        // ✅ 3) Log (una sola vez)
         findNavController().currentBackStackEntry
             ?.savedStateHandle
             ?.getLiveData<HashMap<String, Int>>("atributosFinales")
@@ -144,26 +169,7 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
 
         renderResumenClase(cacheClase, cacheSubclase, cacheHabilidades)
 
-        // ✅ 4) Si es EDICIÓN: cargar datos de Room en EditTexts + ViewModel
-        if (esEdicion) {
-            lifecycleScope.launch {
-                val p = db.personajeDao().getById(personajeId) ?: return@launch
-
-                etNombre.setText(p.nombre)
-                etTrasfondo.setText(p.trasfondo)
-
-                personajeVM.setRazaSubraza(p.raza, p.subraza)
-                personajeVM.setAtributosFinales(parseAtributos(p.atributos))
-                personajeVM.setClaseCompleta(p.clase, p.subclase, parseHabilidades(p.habilidades))
-            }
-        } else {
-            // ✅ Solo si es creación nueva: limpiamos los EditText (1 vez, al inicio real)
-            // (si ya estaban vacíos, no pasa nada)
-            etNombre.setText("")
-            etTrasfondo.setText("")
-        }
-
-        // ✅ 5) Guardar (INSERT si crear, UPDATE si editar)
+        // ✅ 4) Guardar (INSERT si crear, UPDATE si editar)
         btnRegistrar.setOnClickListener {
 
             val nombre = etNombre.text.toString().trim()
@@ -202,8 +208,12 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
             val atributosString = atributos.entries.joinToString(";") { "${it.key}:${it.value}" }
             val habilidadesString = habilidades.joinToString(",")
 
-            // Nivel por defecto (hasta que implementes leveo real)
-            val nivel = 1
+            val nivel = if (esEdicion) (personajeOriginal?.nivel ?: 1) else 1
+
+            // ✅ IMPORTANTÍSIMO:
+            // En EDICIÓN preservamos armaduraEquipada y tieneEscudo.
+            val armaduraEquipada = if (esEdicion) (personajeOriginal?.armaduraEquipada ?: "Sin armadura") else "Sin armadura"
+            val tieneEscudo = if (esEdicion) (personajeOriginal?.tieneEscudo ?: false) else false
 
             val personajeEntity = PersonajeEntity(
                 id = if (esEdicion) personajeId else 0,
@@ -215,7 +225,9 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
                 clase = clase,
                 subclase = subclase,
                 habilidades = habilidadesString,
-                nivel = nivel
+                nivel = nivel,
+                armaduraEquipada = armaduraEquipada,
+                tieneEscudo = tieneEscudo
             )
 
             lifecycleScope.launch {
@@ -227,21 +239,27 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
                     Toast.makeText(requireContext(), "Personaje guardado correctamente", Toast.LENGTH_SHORT).show()
                 }
 
-                // ✅ IMPORTANTE: cerramos la sesión de creación para que el próximo "+ Añadir" empiece limpio
-                personajeVM.finishDraft()
+                // ✅ Al terminar creación, dejamos el VM listo para el próximo “+ Añadir”
+                limpiarDraftParaNuevo()
 
                 findNavController().popBackStack(R.id.personajesFragment, false)
             }
         }
     }
 
+    // ✅ Limpieza segura para iniciar un personaje nuevo
+    private fun limpiarDraftParaNuevo() {
+        personajeOriginal = null
+        personajeVM.setRazaSubraza(null, null)
+        personajeVM.setAtributosFinales(emptyMap())
+        personajeVM.setClaseCompleta(null, null, emptyList())
+    }
+
     // -----------------------------
     // HELPERS
     // -----------------------------
-
     private fun parseAtributos(raw: String): Map<String, Int> {
         if (raw.isBlank()) return emptyMap()
-
         val mapa = mutableMapOf<String, Int>()
         raw.split(";").forEach { item ->
             val kv = item.split(":")
@@ -259,4 +277,3 @@ class CrearPersonajeFragment : Fragment(R.layout.fragment_crear_personaje) {
         return raw.split(",").map { it.trim() }.filter { it.isNotBlank() }
     }
 }
-

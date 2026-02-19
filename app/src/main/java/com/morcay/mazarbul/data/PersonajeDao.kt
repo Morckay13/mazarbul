@@ -3,7 +3,6 @@ package com.morcay.mazarbul.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 
@@ -28,4 +27,12 @@ interface PersonajeDao {
     @Query("DELETE FROM personajes WHERE id = :id")
     suspend fun deleteById(id: Int)
 
+    @Query("UPDATE personajes SET armaduraEquipada = :armadura WHERE id = :id")
+    suspend fun updateArmadura(id: Int, armadura: String)
+
+    // ✅ NUEVO: guardar escudo
+    @Query("UPDATE personajes SET tieneEscudo = :tieneEscudo WHERE id = :id")
+    suspend fun updateEscudo(id: Int, tieneEscudo: Boolean)
+
 }
+

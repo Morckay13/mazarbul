@@ -11,35 +11,23 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.morcay.mazarbul.R
 import com.morcay.mazarbul.data.AppDatabase
+import com.morcay.mazarbul.rules.ArmorCategory
 import com.morcay.mazarbul.rules.Ascendencia
 import com.morcay.mazarbul.rules.ClasePF2
-import com.morcay.mazarbul.rules.ArmorCategory
 import com.morcay.mazarbul.rules.ProficienciasPF2
 import com.morcay.mazarbul.rules.bonusCompetencia
 import kotlinx.coroutines.launch
 import kotlin.math.floor
 import kotlin.math.min
 
-/**
- * Pantalla de detalle del personaje.
- *
- * ✅ CA PF2e (motor real por clase/nivel, y armadura temporal):
- * CA = 10 + itemBonus(armadura) + DEX(capeada) + competencia(clase,nivel,categoria) + escudo(si levantado)
- *
- * - Armadura: spinner temporal (todavía NO inventario real)
- * - Competencia: viene de ProficienciasPF2 (por clase/nivel y categoría de armadura)
- * - Escudo: +2 si el switch está activado
- */
 class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1) Recoger ID del personaje
         val personajeId = arguments?.getInt("personajeId", -1) ?: -1
         if (personajeId == -1) return
 
-        // 2) Referencias UI
         val img = view.findViewById<ImageView>(R.id.imgPersonaje)
         val tvNombre = view.findViewById<TextView>(R.id.tvNombre)
         val tvRaza = view.findViewById<TextView>(R.id.tvRaza)
@@ -63,22 +51,16 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
         val tvReflejos = view.findViewById<TextView>(R.id.tvReflejos)
         val tvVoluntad = view.findViewById<TextView>(R.id.tvVoluntad)
 
-        // ✅ Escudo (+2 si está levantado)
         val swEscudo = view.findViewById<SwitchCompat>(R.id.swEscudoLevantado)
-
-        // ✅ Armadura (Spinner) — temporal
         val spArmadura = view.findViewById<Spinner>(R.id.spArmadura)
 
-        // 3) DB
         val db = AppDatabase.getDatabase(requireContext())
 
-        // Botón editar -> modo edición
         btnEditar.setOnClickListener {
             val b = Bundle().apply { putInt("personajeId", personajeId) }
             findNavController().navigate(R.id.crearPersonajeFragment, b)
         }
 
-        // Botón eliminar -> confirmación
         btnEliminar.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Eliminar personaje")
@@ -94,11 +76,9 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
                 .show()
         }
 
-        // 4) Cargar personaje y pintar
         lifecycleScope.launch {
             val p = db.personajeDao().getById(personajeId) ?: return@launch
 
-            // Datos básicos
             tvNombre.text = p.nombre
             tvRaza.text = "Raza: ${p.raza} • ${p.subraza}"
             tvClase.text = "Clase: ${p.clase} • ${p.subclase}"
@@ -107,62 +87,47 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
             tvNivel.text = "Nivel: $nivel"
             tvTrasfondo.text = p.trasfondo.ifBlank { "Sin trasfondo" }
 
-            // Atributos
             val atributosMap = parseAtributos(p.atributos)
             pintarAtributosTabla(layoutInflater, containerAtributos, atributosMap)
 
-            // Habilidades (por ahora: entrenadas si están guardadas)
             val habilidades = parseHabilidades(p.habilidades)
             pintarHabilidadesTabla(layoutInflater, containerHabilidades, habilidades, atributosMap, nivel)
 
-            // Mods base
             val modDes = calcularModificador(atributosMap["Destreza"] ?: 10)
             val modCon = calcularModificador(atributosMap["Constitución"] ?: 10)
             val modSab = calcularModificador(atributosMap["Sabiduría"] ?: 10)
 
-            // Iniciativa (simple)
             tvIniciativa.text = "Iniciativa: ${formatearBonus(modDes)}"
 
-            // ==========================
-            // ✅ PERCEPCIÓN PF2e REAL (por clase/nivel)
-            // ==========================
+            // Percepción REAL por clase/nivel
             val gradoPerc = ProficienciasPF2.gradoPercepcion(p.clase, nivel)
             val compPerc = bonusCompetencia(gradoPerc, nivel)
             tvPercepcion.text = "Percepción: ${formatearBonus(modSab + compPerc)} ($gradoPerc)"
 
-            // ==========================
-            // ✅ TS PF2e REAL (por clase/nivel)
-            // ==========================
+            // TS REAL por clase/nivel
             val (gFort, gRef, gVol) = ProficienciasPF2.gradosTS(p.clase, nivel)
+            tvFortaleza.text = "Fortaleza: ${formatearBonus(modCon + bonusCompetencia(gFort, nivel))} ($gFort)"
+            tvReflejos.text = "Reflejos: ${formatearBonus(modDes + bonusCompetencia(gRef, nivel))} ($gRef)"
+            tvVoluntad.text = "Voluntad: ${formatearBonus(modSab + bonusCompetencia(gVol, nivel))} ($gVol)"
 
-            val fortTotal = modCon + bonusCompetencia(gFort, nivel)
-            val refTotal = modDes + bonusCompetencia(gRef, nivel)
-            val volTotal = modSab + bonusCompetencia(gVol, nivel)
-
-            tvFortaleza.text = "Fortaleza: ${formatearBonus(fortTotal)} ($gFort)"
-            tvReflejos.text = "Reflejos: ${formatearBonus(refTotal)} ($gRef)"
-            tvVoluntad.text = "Voluntad: ${formatearBonus(volTotal)} ($gVol)"
-
-            // Velocidad (por ascendencia)
+            // Velocidad
             val asc = Ascendencia.fromNombre(p.raza)
             val velocidad = asc?.velocidad ?: 25
             tvVelocidad.text = "Velocidad: $velocidad ft (base)"
 
-            // PG (básico)
+            // PG
             val clase = ClasePF2.fromNombre(p.clase)
             val pgAsc = asc?.pgBase ?: 8
             val pgClase = clase?.pgPorNivel ?: 8
             val pgTotal = pgAsc + ((pgClase + modCon) * nivel)
             tvPG.text = "PG: $pgTotal  (Asc: $pgAsc, Clase: $pgClase/nivel, CON: ${formatearBonus(modCon)})"
 
-            // Imagen (placeholder)
             img.setImageResource(R.mipmap.ic_launcher)
 
             // =========================================================
-            // ✅ CA PF2e REAL (por clase/nivel) + ARMADURA + ESCUDO
+            // ✅ INVENTARIO MÍNIMO: ARMADURA + ESCUDO desde Room
             // =========================================================
 
-            // 1) Armaduras temporales
             val armaduras = listOf(
                 ArmorBase.noArmor(),
                 ArmorBase.leatherArmor(),
@@ -170,64 +135,94 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
                 ArmorBase.fullPlate()
             )
 
-            // 2) Spinner
-            val nombres = armaduras.map { it.nombre }
             spArmadura.adapter = ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                nombres
+                armaduras.map { it.nombre }
             )
 
-            /**
-             * Función central:
-             * recalcula CA cada vez que cambie armadura o escudo.
-             */
-            fun recalcularYMostrarCA(armadura: ArmorBase, escudoLevantado: Boolean) {
+            // Cargar guardado
+            val indexGuardado = armaduras.indexOfFirst { it.nombre == p.armaduraEquipada }.let { if (it == -1) 0 else it }
+            swEscudo.isChecked = p.tieneEscudo
 
-                // 1) DEX cap según armadura
-                val dexAplicada = if (armadura.dexCap == null) modDes else min(modDes, armadura.dexCap)
+            var armaduraSeleccionada = armaduras[indexGuardado]
 
-                // ✅ 2) Grado de defensa REAL por clase/nivel/categoría
-                //    ESTE ES EL ARREGLO CLAVE
+            fun recalcularYMostrarCA() {
+                // 1) Base
+                val base = 10
+
+                // 2) Armadura
+                val itemBonus = armaduraSeleccionada.itemBonus
+
+                // 3) DEX (capeada si aplica)
+                val dexCap = armaduraSeleccionada.dexCap
+                val dexAplicada = if (dexCap == null) modDes else min(modDes, dexCap)
+
+                // 4) Competencia real por clase/nivel/categoría (+ subclase para clérigo)
                 val gradoDefensa = ProficienciasPF2.gradoDefensa(
                     clase = p.clase,
                     nivel = nivel,
-                    categoria = armadura.categoria,
-                    subclase = p.subclase // importante para Clerigo Warpriest (si aplica)
+                    categoria = armaduraSeleccionada.categoria,
+                    subclase = p.subclase
                 )
-
-                // 3) Bonus de competencia PF2e
                 val compDefensa = bonusCompetencia(gradoDefensa, nivel)
 
-                // 4) Escudo (+2)
-                val bonusEscudo = if (escudoLevantado) 2 else 0
+                // 5) Escudo
+                val bonusEscudo = if (swEscudo.isChecked) 2 else 0
 
-                // 5) CA final PF2e (base)
-                val ca = 10 + armadura.itemBonus + dexAplicada + compDefensa + bonusEscudo
+                // 6) Total
+                val caTotal = base + itemBonus + dexAplicada + compDefensa + bonusEscudo
 
-                // 6) Mostrar con desglose (muy útil para depurar)
-                tvCA.text =
-                    "Clase de Armadura: $ca (10 + item:${armadura.itemBonus} + DEX:${formatearBonus(dexAplicada)} + $gradoDefensa:$compDefensa + escudo:$bonusEscudo)"
+                // ✅ Presentación “ficha real”
+                val dexLinea = if (dexCap == null) {
+                    "• Destreza: ${formatearBonus(dexAplicada)}"
+                } else {
+                    "• Destreza (cap $dexCap): ${formatearBonus(dexAplicada)}"
+                }
+
+                val escudoLinea = if (bonusEscudo > 0) "• Escudo: +$bonusEscudo" else "• Escudo: +0"
+
+                tvCA.text = buildString {
+                    appendLine("Clase de Armadura: $caTotal")
+                    appendLine("• Base: $base")
+                    appendLine("• Armadura (${armaduraSeleccionada.nombre}): +$itemBonus")
+                    appendLine(dexLinea)
+                    appendLine("• Competencia ($gradoDefensa): +$compDefensa")
+                    appendLine(escudoLinea)
+                }.trimEnd()
             }
 
-            // Pintado inicial
-            var armaduraSeleccionada = armaduras[0]
-            recalcularYMostrarCA(armaduraSeleccionada, swEscudo.isChecked)
+            // Evitar writes al inicializar
+            var inicializando = true
 
-            // Cambios de armadura
+            spArmadura.setSelection(indexGuardado, false)
+            recalcularYMostrarCA()
+
             spArmadura.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, v: View?, position: Int, id: Long) {
                     armaduraSeleccionada = armaduras[position]
-                    recalcularYMostrarCA(armaduraSeleccionada, swEscudo.isChecked)
-                }
+                    recalcularYMostrarCA()
 
+                    if (!inicializando) {
+                        lifecycleScope.launch {
+                            db.personajeDao().updateArmadura(personajeId, armaduraSeleccionada.nombre)
+                        }
+                    }
+                }
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
 
-            // Cambios de escudo
             swEscudo.setOnCheckedChangeListener { _, isChecked ->
-                recalcularYMostrarCA(armaduraSeleccionada, isChecked)
+                recalcularYMostrarCA()
+                if (!inicializando) {
+                    lifecycleScope.launch {
+                        // OJO: necesitas este método en el DAO
+                        db.personajeDao().updateEscudo(personajeId, isChecked)
+                    }
+                }
             }
+
+            inicializando = false
         }
     }
 
@@ -242,8 +237,6 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
     ) {
         companion object {
             fun noArmor() = ArmorBase("Sin armadura", ArmorCategory.UNARMORED, 0, null)
-
-            // Valores típicos (para test del motor de CA)
             fun leatherArmor() = ArmorBase("Cuero (Ligera)", ArmorCategory.LIGHT, 1, 4)
             fun chainMail() = ArmorBase("Cota de mallas (Media)", ArmorCategory.MEDIUM, 4, 1)
             fun fullPlate() = ArmorBase("Placas (Pesada)", ArmorCategory.HEAVY, 6, 0)
@@ -275,27 +268,18 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
     // ----------------------------
     // CÁLCULOS
     // ----------------------------
-    private fun calcularModificador(score: Int): Int =
-        floor((score - 10) / 2.0).toInt()
-
-    private fun formatearBonus(valor: Int): String =
-        if (valor >= 0) "+$valor" else valor.toString()
+    private fun calcularModificador(score: Int): Int = floor((score - 10) / 2.0).toInt()
+    private fun formatearBonus(valor: Int): String = if (valor >= 0) "+$valor" else valor.toString()
 
     // ----------------------------
     // UI HELPERS
     // ----------------------------
-    private fun pintarAtributosTabla(
-        inflater: LayoutInflater,
-        container: LinearLayout,
-        atributos: Map<String, Int>
-    ) {
+    private fun pintarAtributosTabla(inflater: LayoutInflater, container: LinearLayout, atributos: Map<String, Int>) {
         container.removeAllViews()
         val orden = listOf("Fuerza", "Destreza", "Constitución", "Inteligencia", "Sabiduría", "Carisma")
-
         for (nombre in orden) {
             val valor = atributos[nombre] ?: 10
             val mod = calcularModificador(valor)
-
             val fila = inflater.inflate(R.layout.item_atributo_detalle, container, false)
             fila.findViewById<TextView>(R.id.tvNombreAtrib).text = nombre
             fila.findViewById<TextView>(R.id.tvValorAtrib).text = valor.toString()
@@ -312,21 +296,17 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
         nivel: Int
     ) {
         container.removeAllViews()
-
         for (hab in habilidades) {
             val fila = inflater.inflate(R.layout.item_habilidad_detalle, container, false)
-
             val tvEntrenada = fila.findViewById<TextView>(R.id.tvEntrenada)
             val tvNombre = fila.findViewById<TextView>(R.id.tvNombreHab)
             val tvBonus = fila.findViewById<TextView>(R.id.tvBonusHab)
 
-            // Por ahora: si está en la lista guardada => entrenada
             tvEntrenada.text = "EN"
 
             val atributo = atributoDeHabilidad(hab)
             val mod = calcularModificador(atributos[atributo] ?: 10)
 
-            // Entrenado = nivel + 2 (por ahora)
             val competencia = nivel + 2
             tvNombre.text = "$hab (${atributo.take(3)})"
             tvBonus.text = formatearBonus(mod + competencia)
@@ -357,3 +337,5 @@ class DetallePersonajeFragment : Fragment(R.layout.fragment_detalle_personaje) {
             .replace("ñ", "n")
     }
 }
+
+
