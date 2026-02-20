@@ -29,7 +29,7 @@ class PersonajesFragment : Fragment(R.layout.fragment_personajes) {
             }
 
             // Navegar a la ficha/detalle
-            findNavController().navigate(R.id.detallePersonajeFragment, b)
+            findNavController().navigate(R.id.fichaPersonajeFragment, b)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())

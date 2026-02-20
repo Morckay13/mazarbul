@@ -29,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "mazarbul_db"
                 )
                     // ✅ IMPORTANTE: registrar TODAS las migraciones necesarias
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
 
                 INSTANCE = instance
@@ -60,6 +60,12 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL(
                     "ALTER TABLE personajes ADD COLUMN tieneEscudo INTEGER NOT NULL DEFAULT 0"
                 )
+            }
+        }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE personajes ADD COLUMN armaEquipada TEXT NOT NULL DEFAULT 'Sin arma'")
             }
         }
     }

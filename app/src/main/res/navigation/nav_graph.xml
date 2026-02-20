@@ -61,6 +61,14 @@
         android:id="@+id/detallePersonajeFragment"
         android:name="com.morcay.mazarbul.ui.detalle.DetallePersonajeFragment"
         android:label="Detalle Personaje" />
+    <fragment
+        android:id="@+id/fichaPersonajeFragment"
+        android:name="com.morcay.mazarbul.ui.ficha.FichaPersonajeFragment"
+        android:label="Ficha">
+        <argument
+            android:name="personajeId"
+            app:argType="integer" />
+    </fragment>
 
 
 

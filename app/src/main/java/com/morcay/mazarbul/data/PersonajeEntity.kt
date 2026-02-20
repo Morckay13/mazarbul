@@ -18,8 +18,13 @@ data class PersonajeEntity(
     val habilidades: String,
     val nivel: Int,
 
-    // ✅ NUEVO (inventario mínimo)
+    // añadimos la armadura
     val armaduraEquipada: String = "Sin armadura",
-    val tieneEscudo: Boolean = false
+
+    //añadimos escudo
+    val tieneEscudo: Boolean = false,
+
+    // añadimos el arma
+    val armaEquipada: String = "Sin arma"
 )
 

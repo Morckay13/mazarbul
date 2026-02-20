@@ -34,5 +34,8 @@ interface PersonajeDao {
     @Query("UPDATE personajes SET tieneEscudo = :tieneEscudo WHERE id = :id")
     suspend fun updateEscudo(id: Int, tieneEscudo: Boolean)
 
+    @Query("UPDATE personajes SET armaEquipada = :arma WHERE id = :id")
+    suspend fun updateArma(id: Int, arma: String)
+
 }
 

@@ -126,6 +126,20 @@
             android:layout_marginTop="8dp" />
 
         <TextView
+            android:id="@+id/tvArmaEquipada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Arma equipada: -"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvDanoArma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Daño: -"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
             android:id="@+id/tvPG"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
